@@ -1,0 +1,665 @@
+openapi: 3.0.1
+info:
+  title: Midpage Legal Database API
+  description: >-
+    REST API for Midpage's US legal database ("Caselaw Building Blocks"). Search
+    court opinions with semantic (vector), keyword (full-text), or hybrid search;
+    retrieve full opinion data by ID, citation, or docket number with citator
+    treatments; and read the authenticated user's identity and subscription
+    status. Authenticate with a bearer token (API key) in the Authorization header.
+  termsOfService: https://www.midpage.ai/
+  contact:
+    name: Midpage
+    url: https://www.midpage.ai/
+  version: '1.0'
+servers:
+  - url: https://app.midpage.ai/api/v1
+    description: Production server
+security:
+  - apiKey: []
+paths:
+  /search:
+    post:
+      operationId: searchOpinions
+      tags:
+        - Search
+      summary: Search opinions
+      description: >-
+        Search for opinions using semantic (vector), keyword (full-text), or
+        hybrid search.
+
+        Search modes: `semantic` (vector similarity using AI embeddings),
+        `keyword` (Elasticsearch full-text with Lexis/Westlaw-style boolean
+        operators), and `hybrid` (semantic + keyword combined with reciprocal
+        rank fusion and deduplication).
+
+        Boolean operators (keyword mode only, must be UPPERCASE): AND, OR, NOT,
+        "..." (exact phrase), * and ? (wildcards), W/n (proximity within n
+        words), and () for grouping.
+
+        Pagination uses `page` (1-indexed) and `page_size` (max 100). Semantic
+        search supports limited deep pagination (~500 unique results); keyword
+        and hybrid support deep pagination via Elasticsearch.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchRequest'
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: query is required and must be a string
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Unauthorized
+                  message:
+                    type: string
+                    example: Invalid API key
+  /opinions/get:
+    post:
+      operationId: getOpinions
+      tags:
+        - Opinions
+      summary: Get opinions
+      description: >-
+        Retrieve full opinion data by ID, citation, or docket number. Supports
+        bulk reads of up to 100 items per request. Provide exactly one of
+        `opinion_ids`, `citations`, or `docket` (not multiple).
+
+        Lookup methods: `opinion_ids` (direct lookup, up to 100), `citations`
+        (reporter citation, case-insensitive, up to 100), and `docket` (docket
+        number + court; single lookup, may return multiple opinions).
+
+        When using `citations` or `docket`, a lookup may match multiple opinions
+        (e.g., majority and dissent from the same case). The response includes
+        `citation_matches` or `docket_matches` arrays showing which lookups
+        matched which opinion IDs.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                opinion_ids:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of opinion IDs to retrieve
+                  example:
+                    - '8623588'
+                    - '1865773'
+                citations:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of citation strings to look up (case-insensitive)
+                  example:
+                    - 556 U.S. 662
+                    - 550 U.S. 544
+                docket:
+                  $ref: '#/components/schemas/DocketLookup'
+                include_content:
+                  type: boolean
+                  default: false
+                  description: Include full HTML content
+                include_detailed_treatments:
+                  type: boolean
+                  default: false
+                  description: Include citator treatments
+      responses:
+        '200':
+          description: Opinion data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  opinions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/OpinionFull'
+                  citation_matches:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CitationMatch'
+                    description: >-
+                      Only present when looking up by `citations`. Shows which
+                      citations matched which opinion IDs.
+                  docket_matches:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DocketMatch'
+                    description: >-
+                      Only present when looking up by `docket`. Shows which
+                      opinions matched.
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: >-
+                      Must provide one of: opinion_ids, citations (as arrays), or
+                      docket (object with docket_number)
+  /me:
+    get:
+      operationId: getCurrentUser
+      tags:
+        - User
+      summary: Get current user
+      description: >-
+        Retrieve the authenticated user's Midpage identity and current
+        subscription status. Authenticate with a bearer token in the
+        Authorization header. Supported bearer tokens: OAuth access token or API
+        key. Common subscription statuses: `active`, `trialing`, `past_due`,
+        `canceled`. If no subscription status is available, `subscriptionStatus`
+        may be `null`.
+      responses:
+        '200':
+          description: Current user profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurrentUserResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Unauthorized
+components:
+  securitySchemes:
+    apiKey:
+      type: http
+      scheme: bearer
+      description: >-
+        API key authentication. Get your API key from the Midpage Developer
+        Portal at https://app.midpage.ai/developers
+  schemas:
+    CurrentUserResponse:
+      type: object
+      required:
+        - userId
+        - subscriptionStatus
+      properties:
+        userId:
+          type: string
+          description: Midpage user identifier
+          example: user_123
+        subscriptionStatus:
+          type: string
+          nullable: true
+          description: >-
+            Current subscription status. Common values include `active`,
+            `trialing`, `past_due`, and `canceled`. May be `null` if no
+            subscription status is available.
+          example: active
+    SearchRequest:
+      type: object
+      required:
+        - query
+      properties:
+        query:
+          type: string
+          description: Search query text
+          example: breach of fiduciary duty
+        mode:
+          type: string
+          enum:
+            - semantic
+            - keyword
+            - hybrid
+          default: semantic
+          description: >-
+            Search mode: `semantic` (vector similarity, default), `keyword`
+            (full-text), or `hybrid` (combined semantic and keyword results using
+            reciprocal rank fusion).
+        page:
+          type: integer
+          minimum: 1
+          default: 1
+          description: Page number (1-indexed)
+        page_size:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+          description: Results per page (max 100)
+        filters:
+          $ref: '#/components/schemas/SearchFilters'
+        include_facets:
+          type: boolean
+          default: false
+          description: >-
+            Include facet breakdowns in the response showing result counts by
+            court, jurisdiction, state, and year. Facets are only available in
+            `keyword` and `hybrid` modes (not `semantic`). In `hybrid` mode,
+            facet counts reflect keyword search results only.
+    SearchFilters:
+      type: object
+      description: Optional filters to narrow search results
+      properties:
+        court_ids:
+          type: array
+          items:
+            type: string
+          description: Filter by court IDs (e.g., "ca9", "scotus", "nysd")
+          example:
+            - ca9
+            - ca2
+        jurisdictions:
+          type: array
+          items:
+            type: string
+            enum:
+              - Federal Appellate
+              - Federal District
+              - State Supreme
+              - State Appellate
+              - State Trial
+              - Federal Bankruptcy
+              - Federal Bankruptcy Panel
+              - Federal Special
+              - Military Appellate
+              - State Attorney General
+              - State Special
+              - U.S. Territory
+              - Committee
+              - International
+              - Tribal
+              - Tribal Appellate
+              - Tribal Supreme
+              - Tribal Trial
+          description: >-
+            Filter by jurisdiction type using canonical values from Midpage court
+            metadata.
+          example:
+            - Federal Appellate
+            - State Supreme
+        states:
+          type: array
+          items:
+            type: string
+          description: >-
+            Filter by state using full canonical names from Midpage court
+            metadata.
+          example:
+            - California
+            - New York
+        publish_status:
+          type: string
+          description: >-
+            Filter by publication status. Use `unknown` to include opinions where
+            publication metadata is missing or uncertain.
+          enum:
+            - published
+            - unpublished
+            - unknown
+            - in_chambers
+            - separate
+            - errata
+            - relating_to
+          example: published
+        date_filed:
+          type: object
+          description: Filter by filing date range
+          properties:
+            start:
+              type: string
+              format: date
+              description: Start date (YYYY-MM-DD)
+              example: '2020-01-01'
+            end:
+              type: string
+              format: date
+              description: End date (YYYY-MM-DD)
+              example: '2024-12-31'
+    SearchResponse:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchResultItem'
+        pagination:
+          $ref: '#/components/schemas/PaginationMeta'
+        metadata:
+          type: object
+          properties:
+            mode:
+              type: string
+              enum:
+                - semantic
+                - keyword
+                - hybrid
+              description: Search mode used
+            query:
+              type: string
+              description: Original query
+            processing_time_ms:
+              type: integer
+              description: Server processing time in milliseconds
+            boolean_query:
+              type: object
+              description: Present in keyword mode when boolean operators are detected
+              properties:
+                detected:
+                  type: boolean
+                  description: Whether boolean operators were detected
+                operators:
+                  type: array
+                  items:
+                    type: string
+                  description: List of detected operators (e.g., ["AND", "OR", "W/5"])
+        facets:
+          $ref: '#/components/schemas/SearchFacets'
+    SearchFacets:
+      type: object
+      description: >-
+        Facet breakdowns showing result counts by various dimensions. Only
+        present when `include_facets: true` in request and mode is `keyword` or
+        `hybrid`. Counts are computed across the full result set (after filters),
+        not just the current page.
+      properties:
+        court_abbreviation:
+          type: array
+          items:
+            $ref: '#/components/schemas/FacetBucket'
+          description: Breakdown by court abbreviation (e.g., "9th Cir.", "S.D.N.Y.")
+        jurisdiction:
+          type: array
+          items:
+            $ref: '#/components/schemas/FacetBucket'
+          description: Breakdown by jurisdiction type
+        state:
+          type: array
+          items:
+            $ref: '#/components/schemas/FacetBucket'
+          description: Breakdown by state name
+        year_filed:
+          type: array
+          items:
+            $ref: '#/components/schemas/FacetBucket'
+          description: Breakdown by filing year
+        note:
+          type: string
+          description: Explanatory note about facet limitations.
+          example: >-
+            Facet counts reflect keyword search results only; semantic (Pinecone)
+            results are not included in these counts.
+    FacetBucket:
+      type: object
+      description: A single bucket in a facet breakdown
+      properties:
+        key:
+          type: string
+          description: The value (e.g., "9th Cir.", "Federal Appellate", "2024")
+        count:
+          type: integer
+          description: Number of documents matching this value
+    SearchResultItem:
+      type: object
+      properties:
+        opinion_id:
+          type: string
+          description: Opinion identifier
+        score:
+          type: number
+          description: >-
+            Relevance score. Scale varies by mode: semantic 0-1 (cosine
+            similarity), keyword 0-100+ (BM25 score).
+        case_name:
+          type: string
+          description: Case name/caption
+        court_id:
+          type: string
+          description: Court identifier
+        court_name:
+          type: string
+          description: Full court name
+        court_abbreviation:
+          type: string
+          description: Court citation abbreviation
+        jurisdiction:
+          type: string
+          description: Jurisdiction type
+        state:
+          type: string
+          nullable: true
+          description: State name (null for federal courts)
+        publish_status:
+          type: string
+          nullable: true
+          description: Publication status, when available
+          enum:
+            - published
+            - unpublished
+            - unknown
+            - in_chambers
+            - separate
+            - errata
+            - relating_to
+        date_filed:
+          type: string
+          format: date
+          description: Filing date (YYYY-MM-DD)
+        docket_number:
+          type: string
+          nullable: true
+          description: Court docket number, when available
+        snippet:
+          type: string
+          description: Relevant text excerpt from the opinion
+        source:
+          type: string
+          enum:
+            - semantic
+            - keyword
+          description: >-
+            Source of this result. Always present in API responses: semantic mode
+            "semantic", keyword mode "keyword", hybrid mode varies per item.
+    PaginationMeta:
+      type: object
+      properties:
+        page:
+          type: integer
+          description: Current page number
+        page_size:
+          type: integer
+          description: Results per page
+        total_results:
+          type: integer
+          description: Total matching results (capped at 10,000 for keyword/hybrid)
+        total_pages:
+          type: integer
+          description: Total pages available
+        has_next:
+          type: boolean
+          description: Whether more pages exist
+        has_prev:
+          type: boolean
+          description: Whether previous pages exist
+    OpinionFull:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Opinion identifier
+        case_name:
+          type: string
+          description: Case name/caption
+        court_id:
+          type: string
+          description: Court identifier
+        court_abbreviation:
+          type: string
+          description: Citation abbreviation
+        docket_number:
+          type: string
+          description: Court docket number
+        date_filed:
+          type: string
+          format: date
+          description: Filing date
+        state:
+          type: string
+          nullable: true
+          description: State name (null for federal courts)
+        publish_status:
+          type: string
+          enum:
+            - published
+            - unpublished
+            - unknown
+            - in_chambers
+            - separate
+            - errata
+            - relating_to
+          description: >-
+            Publication status for the opinion. Missing or uncertain metadata is
+            returned as unknown.
+        judge_name:
+          type: string
+          description: Authoring judge
+        citations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Citation'
+        citation_count:
+          type: integer
+          description: Number of times this opinion is cited by other opinions
+        overall_treatment:
+          type: string
+          nullable: true
+          enum:
+            - Negative
+            - Caution
+            - Neutral
+          description: >-
+            Most negative treatment category from all citing opinions. Always
+            returned. Priority: Negative > Caution > Neutral > null (no treatment
+            data).
+        treatments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Treatment'
+          description: >-
+            Citator treatments (only included if
+            include_detailed_treatments=true)
+        html_content:
+          type: string
+          description: Full opinion text in HTML (only included if include_content=true)
+    Citation:
+      type: object
+      properties:
+        cited_as:
+          type: string
+          description: Full citation string
+        volume:
+          type: string
+          description: Reporter volume
+        reporter:
+          type: string
+          description: Reporter abbreviation
+        page:
+          type: string
+          description: Starting page
+    Treatment:
+      type: object
+      properties:
+        citing_id:
+          type: string
+          description: ID of opinion citing this one
+        treatment_category:
+          type: string
+          description: Treatment type
+        treatment_description:
+          type: string
+          description: Detailed treatment
+        is_authoritative:
+          type: boolean
+          description: Whether authoritative
+        supporting_quote:
+          type: string
+          description: Quote supporting the treatment
+    CitationMatch:
+      type: object
+      description: Maps a requested citation to the opinion(s) it matched
+      properties:
+        citation:
+          type: string
+          description: The citation string from the request
+          example: 556 U.S. 662
+        opinion_id:
+          type: string
+          description: The matched opinion ID
+          example: '145875'
+    DocketLookup:
+      type: object
+      description: >-
+        Lookup by docket number and court. Requires docket_number and either
+        court_id or court_abbreviation.
+      required:
+        - docket_number
+      properties:
+        docket_number:
+          type: string
+          description: The docket number (e.g., "19-1392", "1:23-cv-01234")
+          example: 19-1392
+        court_id:
+          type: string
+          description: Court identifier (e.g., "scotus", "ca9", "nysd")
+          example: scotus
+        court_abbreviation:
+          type: string
+          description: Court citation abbreviation (e.g., "SCOTUS", "9th Cir.", "S.D.N.Y.")
+          example: SCOTUS
+    DocketMatch:
+      type: object
+      description: Maps a docket lookup to the opinion(s) it matched
+      properties:
+        docket_number:
+          type: string
+          description: The docket number that matched
+          example: 19-1392
+        court_id:
+          type: string
+          description: Court identifier
+          example: scotus
+        court_abbreviation:
+          type: string
+          description: Court citation abbreviation
+          example: SCOTUS
+        opinion_id:
+          type: string
+          description: The matched opinion ID
+          example: '145875'

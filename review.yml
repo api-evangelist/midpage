@@ -1,0 +1,68 @@
+aid: midpage
+name: Midpage
+review:
+  question: Does Midpage expose a documented public WebSocket API?
+  answer: false
+  date: '2026-06-21'
+  reviewer: API Evangelist
+  asyncapiSpecCreated: false
+  asyncapiScopeNote: |
+    No AsyncAPI document was created. Midpage's documented developer surface is
+    a synchronous REST API (https://app.midpage.ai/api/v1) plus a remote Model
+    Context Protocol (MCP) server (https://app.midpage.ai/mcp/v1..v3). The MCP
+    transport is HTTP-based (streamable HTTP / SSE under the MCP spec), not a
+    documented standalone event-driven or WebSocket surface, so no AsyncAPI
+    artifact was authored.
+findings:
+  summary: |
+    Midpage does not publish a documented public WebSocket API. The REST case-law
+    API under https://app.midpage.ai/api/v1 exposes only synchronous HTTPS
+    endpoints (POST /search, POST /opinions/get, GET /me) authenticated with a
+    bearer API key. Midpage also operates a remote MCP server at
+    https://app.midpage.ai/mcp/v1, /mcp/v2, and /mcp/v3, authenticated via OAuth,
+    which uses the MCP HTTP transport rather than a documented ws:// or wss://
+    WebSocket endpoint. No realtime, bidirectional, or streaming WebSocket
+    surface is documented for search, retrieval, citations, or the MCP server as
+    of the review date.
+  transports:
+    - protocol: REST
+      scheme: https
+      baseURL: https://app.midpage.ai/api/v1
+      documented: true
+    - protocol: MCP
+      scheme: https
+      baseURL: https://app.midpage.ai/mcp/v3
+      note: Remote Model Context Protocol server over HTTP (streamable HTTP / SSE), OAuth-authenticated. Not WebSocket.
+      documented: true
+    - protocol: WebSocket
+      scheme: wss
+      documented: false
+      note: No WebSocket endpoint is documented in Midpage's API reference, integrations page, or developer docs as of the review date.
+  endpointsConfirmedRest:
+    - POST https://app.midpage.ai/api/v1/search
+    - POST https://app.midpage.ai/api/v1/opinions/get
+    - GET  https://app.midpage.ai/api/v1/me
+  mcpToolsConfirmed:
+    - search
+    - findInOpinion
+    - analyzeOpinion
+    - analyzeDocketReport (preview)
+    - analyzeDocketFiling (preview)
+sources:
+  - url: https://midpage-docs.apidocumentation.com/
+    type: Documentation
+    note: API reference lists REST base URL https://app.midpage.ai/api/v1 with bearer (apiKey) auth; no WebSocket mentioned.
+  - url: https://www.midpage.ai/integrations
+    type: Documentation
+    note: Describes the MCP server / Claude connector; MCP is HTTP/OAuth-based, not WebSocket.
+  - url: https://www.midpage.ai/data
+    type: Documentation
+    note: Lists three developer interfaces - REST API, MCP, and SQL read replica; none are WebSocket.
+actions:
+  asyncapiPath: null
+  apisYmlUpdated: true
+  reason: |
+    No WebSocket protocol surface exists, and the MCP transport is HTTP-based
+    rather than a standalone event-driven streaming surface, so no AsyncAPI
+    document was authored. The REST endpoints and MCP server are captured in
+    apis.yml and the OpenAPI specification.

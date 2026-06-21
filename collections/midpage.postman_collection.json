@@ -1,0 +1,159 @@
+{
+  "info": {
+    "_postman_id": "a1f4c2e0-7b6d-4d2a-9c3e-2f1a9d8e7b6c",
+    "name": "Midpage Legal Database API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "REST API for Midpage's US legal database. Search court opinions (semantic, keyword, hybrid), retrieve opinions by ID/citation/docket with citator treatments, and read the authenticated user.\n\nContact:\n Name: Midpage\n URL: https://www.midpage.ai/",
+      "type": "text/plain"
+    }
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://app.midpage.ai/api/v1",
+      "key": "baseUrl"
+    }
+  ],
+  "item": [
+    {
+      "name": "Search",
+      "description": "Search court opinions using semantic, keyword, or hybrid modes.",
+      "item": [
+        {
+          "name": "Search opinions",
+          "request": {
+            "name": "Search opinions",
+            "description": {
+              "content": "Search for opinions using semantic (vector), keyword (full-text), or hybrid search. Supports Lexis/Westlaw-style boolean operators in keyword mode, filters by court/jurisdiction/state/date, and optional facet breakdowns.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "search"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"breach of fiduciary duty\",\n  \"mode\": \"semantic\",\n  \"page\": 1,\n  \"page_size\": 10\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Opinions",
+      "description": "Retrieve full opinion data.",
+      "item": [
+        {
+          "name": "Get opinions",
+          "request": {
+            "name": "Get opinions",
+            "description": {
+              "content": "Retrieve full opinion data by ID, citation, or docket number. Bulk reads of up to 100 items per request. Provide exactly one of opinion_ids, citations, or docket. Optionally include full HTML content and detailed citator treatments.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "opinions",
+                "get"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"opinion_ids\": [\"8623588\", \"1865773\"],\n  \"include_content\": false,\n  \"include_detailed_treatments\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "User",
+      "description": "Authenticated user identity and subscription status.",
+      "item": [
+        {
+          "name": "Get current user",
+          "request": {
+            "name": "Get current user",
+            "description": {
+              "content": "Retrieve the authenticated user's Midpage identity and current subscription status.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "me"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null,
+            "body": {}
+          }
+        }
+      ]
+    }
+  ]
+}

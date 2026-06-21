@@ -1,0 +1,81 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Midpage Legal Database API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Search",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Search opinions",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.midpage.ai/api/v1/search",
+            "body": {
+              "type": "json",
+              "data": "{\n  \"query\": \"breach of fiduciary duty\",\n  \"mode\": \"semantic\",\n  \"page\": 1,\n  \"page_size\": 10\n}"
+            }
+          },
+          "docs": "Search for opinions using semantic (vector), keyword (full-text), or hybrid search. Supports boolean operators in keyword mode, filters, and optional facets."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Opinions",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get opinions",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.midpage.ai/api/v1/opinions/get",
+            "body": {
+              "type": "json",
+              "data": "{\n  \"opinion_ids\": [\"8623588\", \"1865773\"],\n  \"include_content\": false,\n  \"include_detailed_treatments\": false\n}"
+            }
+          },
+          "docs": "Retrieve full opinion data by ID, citation, or docket number. Bulk reads of up to 100 items per request. Provide exactly one of opinion_ids, citations, or docket."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "User",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get current user",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://app.midpage.ai/api/v1/me"
+          },
+          "docs": "Retrieve the authenticated user's Midpage identity and current subscription status."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

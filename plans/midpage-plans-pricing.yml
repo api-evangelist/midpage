@@ -1,0 +1,155 @@
+specification: API Commons Plans
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/Plans
+provider: Midpage
+providerId: midpage
+created: '2026-06-21'
+modified: '2026-06-21'
+reconciled: false
+tags:
+- Legal
+- Case Law
+- Legal Research
+- Search
+- AI
+- Plans
+description: >-
+  Midpage publishes per-seat subscription plans on its pricing page - a Law
+  Students & Faculty tier and a Professional tier, each a flat monthly price
+  per seat (plus AI costs for Drafting mode), and a custom-priced Enterprise
+  tier. All paid tiers include a two-week free trial. Standalone developer
+  API, MCP, and SQL read-replica products ("Caselaw Building Blocks") are
+  offered through the developer portal at app.midpage.ai/developers; granular
+  per-request API pricing is not published on the public pricing page and is
+  marked unreconciled here.
+notes: >-
+  Subscription prices are from the public midpage.ai pricing page and may
+  change. REST API / MCP / SQL read-replica usage pricing is arranged via the
+  developer portal and was not publicly documented at capture time; verify on
+  reconciliation.
+sources:
+- https://www.midpage.ai/pricing
+- https://www.midpage.ai/data
+- https://app.midpage.ai/developers
+plans:
+- id: midpage-students-faculty
+  name: Law Students & Faculty
+  type: subscription
+  description: >-
+    Per-seat plan for law students and faculty with unlimited research,
+    searching, citator, case reading, and the Claude connector. Drafting mode
+    is available with separate AI costs.
+  entries:
+  - label: Law Students & Faculty Seat
+    name: students_faculty_seat
+    type: flat
+    metric: seat
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: $25/mo per seat, plus AI costs for Drafting mode
+    userMultiplied: true
+  elements:
+  - name: Research Agent Requests
+  - name: Manual Searching & Filtering
+  - name: AI-Powered Citator
+  - name: Read Cases
+  - name: Claude Connector
+  - name: Drafting Mode (separate AI costs)
+- id: midpage-professional
+  name: Professional
+  type: subscription
+  description: >-
+    Per-seat plan for practicing professionals with unlimited research,
+    searching, citator, case reading, and the Claude connector. Drafting mode
+    is available with separate AI costs.
+  entries:
+  - label: Professional Seat
+    name: professional_seat
+    type: flat
+    metric: seat
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: $99/mo per seat, plus AI costs for Drafting mode
+    userMultiplied: true
+  elements:
+  - name: Research Agent Requests
+  - name: Manual Searching & Filtering
+  - name: AI-Powered Citator
+  - name: Read Cases
+  - name: Claude Connector
+  - name: Drafting Mode (separate AI costs)
+- id: midpage-enterprise
+  name: Enterprise
+  type: enterprise
+  description: >-
+    Custom-priced plan for teams, including everything in Professional plus
+    Drafting Agent Requests, SSO, and a custom usage dashboard. Contact
+    Midpage for pricing.
+  entries:
+  - label: Enterprise Agreement
+    name: enterprise
+    type: flat
+    metric: contract
+    limit: -1
+    timeFrame: year
+    geo: global
+    unit: 1
+    price: custom pricing for teams
+    userMultiplied: false
+  elements:
+  - name: All Professional Features
+  - name: Drafting Agent Requests
+  - name: SSO
+  - name: Custom Usage Dashboard
+- id: midpage-developer
+  name: Developer Products (Caselaw Building Blocks)
+  type: usage
+  description: >-
+    Standalone developer access to the Midpage legal corpus - REST case-law
+    API, MCP server for AI agents, and direct SQL read-replica access. API
+    keys are created in the developer portal; per-request pricing is not
+    publicly documented.
+  entries:
+  - label: REST Case Law API
+    name: rest_api
+    type: usage
+    metric: requests
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: see developer portal
+    userMultiplied: false
+  - label: MCP Server
+    name: mcp_server
+    type: usage
+    metric: requests
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: see developer portal
+    userMultiplied: false
+  - label: SQL Read Replica
+    name: sql_read_replica
+    type: usage
+    metric: queries
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: see developer portal
+    userMultiplied: false
+  elements:
+  - name: Semantic / Keyword / Hybrid Search
+  - name: Opinion Retrieval
+  - name: Citator Treatments
+  - name: MCP Tools (search, findInOpinion, analyzeOpinion)
+  - name: PostgreSQL Read Replica
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

@@ -1,0 +1,106 @@
+specification: FinOps Framework
+specificationVersion: '1.0'
+schema: https://www.finops.org/framework/
+provider: Midpage
+providerId: midpage
+created: '2026-06-21'
+modified: '2026-06-21'
+reconciled: false
+tags:
+- Legal
+- Case Law
+- Legal Research
+- Search
+- AI
+- FinOps
+- Cost Management
+- FOCUS
+description: >-
+  FinOps view of Midpage spend. Midpage bills per-seat subscriptions (Law
+  Students & Faculty at $25/mo and Professional at $99/mo, plus AI costs for
+  Drafting mode) and custom Enterprise agreements. Standalone developer
+  products - the REST case-law API, MCP server, and SQL read replica - are
+  arranged through the developer portal; their per-request unit economics are
+  not publicly documented and are marked unreconciled here.
+notes: >-
+  Subscription seat prices are from the public pricing page; developer API /
+  MCP / SQL usage rates are not publicly published. Verify metered developer
+  pricing against the Midpage developer portal during reconciliation.
+sources:
+- https://www.midpage.ai/pricing
+- https://www.midpage.ai/data
+- https://app.midpage.ai/developers
+- https://focus.finops.org/focus-specification/v1-3/
+alignedWith:
+  framework: FinOps Foundation Framework
+  frameworkUrl: https://www.finops.org/framework/
+  dataSpec: FOCUS
+  dataSpecVersion: '1.3'
+  dataSpecUrl: https://focus.finops.org/focus-specification/v1-3/
+publisherName: Midpage
+serviceCategory: Legal Technology
+billingModel:
+  pricingCategory: Subscription-Based
+  billingFrequency: Monthly
+  billingCurrency: USD
+  chargeCategories:
+  - Usage
+  - Purchase
+  - Adjustment
+focusColumns:
+  ServiceName: Midpage
+  ServiceCategory: Legal Technology
+  ProviderName: Midpage
+  PublisherName: Midpage
+  InvoiceIssuerName: Midpage
+  BillingCurrency: USD
+  ChargeCategory: Purchase
+  PricingCategory: Subscription-Based
+meters:
+- name: subscription_seats
+  description: Per-seat monthly subscriptions (Law Students & Faculty, Professional).
+  unit: seats
+  aggregation: sum
+  dimensions:
+  - account
+  - plan
+- name: drafting_ai_costs
+  description: AI costs incurred by Drafting mode, billed separately from the seat price.
+  unit: requests
+  aggregation: sum
+  dimensions:
+  - account
+  - user
+- name: api_requests
+  description: REST case-law API calls (search, opinions/get, me) billed via the developer portal.
+  unit: requests
+  aggregation: sum
+  dimensions:
+  - account
+  - api_key
+  - endpoint
+- name: mcp_requests
+  description: MCP server tool invocations by connected AI assistants.
+  unit: requests
+  aggregation: sum
+  dimensions:
+  - account
+  - tool
+- name: sql_queries
+  description: Queries executed against the SQL read replica.
+  unit: queries
+  aggregation: sum
+  dimensions:
+  - account
+principles:
+- name: Visibility
+  description: Track seats, Drafting AI costs, and developer API/MCP/SQL usage through the Midpage developer portal and usage dashboard.
+- name: Allocation
+  description: Tag API keys and seats per team/matter; map spend to internal cost centers.
+- name: Optimization
+  description: Right-size seat counts; scope search page_size and bulk reads to need; use caching of retrieved opinions to reduce repeat calls.
+- name: Accountability
+  description: Assign owners per project/key; review subscription and usage spend monthly against budget.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

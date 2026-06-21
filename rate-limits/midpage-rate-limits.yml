@@ -1,0 +1,70 @@
+specification: API Commons Rate Limits
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/RateLimits
+provider: Midpage
+providerId: midpage
+created: '2026-06-21'
+modified: '2026-06-21'
+reconciled: false
+tags:
+- Legal
+- Case Law
+- Legal Research
+- Search
+- AI
+- Rate Limiting
+- Quotas
+- Throttling
+description: >-
+  Midpage's REST case-law API authenticates with a bearer API key issued from
+  the developer portal. The documented per-request bounds are a maximum
+  page_size of 100 results per search request and bulk reads of up to 100 items
+  per /opinions/get call; keyword and hybrid result counts are capped at 10,000
+  total results, and semantic search supports limited deep pagination (~500
+  unique results). Account-level request-rate or token quotas (RPM/RPD) are not
+  publicly documented and are marked unreconciled here.
+notes: >-
+  Verify account-level rate limits, throttling response codes, and any quota
+  tiers in the Midpage developer portal on reconciliation; only per-request
+  size and pagination bounds were documented at capture time.
+sources:
+- https://midpage-docs.apidocumentation.com/
+- https://www.midpage.ai/data
+- https://app.midpage.ai/developers
+responseCodes:
+  unauthorized: 401
+  badRequest: 400
+limits:
+- name: Search Page Size
+  scope: request
+  metric: results
+  limit: 100
+  notes: Maximum page_size per POST /search request.
+- name: Bulk Opinion Reads
+  scope: request
+  metric: items
+  limit: 100
+  notes: Maximum items (opinion_ids or citations) per POST /opinions/get request.
+- name: Keyword / Hybrid Total Results
+  scope: query
+  metric: results
+  limit: 10000
+  notes: total_results is capped at 10,000 for keyword and hybrid search modes.
+- name: Semantic Deep Pagination
+  scope: query
+  metric: results
+  limit: 500
+  notes: Semantic search supports approximately 500 unique results of deep pagination.
+- name: Account Request Rate
+  scope: account
+  metric: requests
+  limit: see provider documentation
+  notes: Account-level RPM/RPD quotas are not publicly documented; confirm in the developer portal.
+policies:
+- name: Bearer Authentication
+  description: All REST requests require a bearer API key in the Authorization header.
+- name: Backoff Strategy
+  description: Clients should implement exponential backoff with jitter on errors and respect any throttling responses.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

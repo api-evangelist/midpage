@@ -1,0 +1,128 @@
+aid: midpage
+url: https://raw.githubusercontent.com/api-evangelist/midpage/refs/heads/main/apis.yml
+name: Midpage
+kind: company
+description: Midpage is an AI-powered legal research and drafting platform built on
+  its own US legal database of millions of court opinions, statutes, and regulations
+  spanning federal and state jurisdictions. Its developer products expose this corpus
+  through a REST case-law API (semantic, keyword, and hybrid search; opinion retrieval;
+  citator treatments), a Model Context Protocol (MCP) server for AI agents, and direct
+  SQL read-replica access.
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+tags:
+- Legal
+- Case Law
+- Legal Research
+- Search
+- AI
+created: '2026-06-21'
+modified: '2026-06-21'
+specificationVersion: '0.19'
+apis:
+- aid: midpage:case-law-search
+  name: Midpage Case Law Search API
+  tags:
+  - Search
+  - Case Law
+  - Keyword
+  - Hybrid
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://midpage-docs.apidocumentation.com/
+  baseURL: https://app.midpage.ai/api/v1
+  properties:
+  - url: https://midpage-docs.apidocumentation.com/
+    type: Documentation
+  - url: openapi/midpage-openapi.yml
+    type: OpenAPI
+  description: Full-text keyword search over US court opinions with Lexis/Westlaw-style
+    boolean, phrase, wildcard, and proximity (W/n) operators, plus hybrid search that
+    fuses keyword and semantic results with reciprocal rank fusion. Supports filters
+    by court, jurisdiction, state, publication status, and date, with optional facet
+    breakdowns.
+- aid: midpage:document-retrieval
+  name: Midpage Document Retrieval API
+  tags:
+  - Opinions
+  - Documents
+  - Retrieve
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://midpage-docs.apidocumentation.com/
+  baseURL: https://app.midpage.ai/api/v1
+  properties:
+  - url: https://midpage-docs.apidocumentation.com/
+    type: Documentation
+  - url: openapi/midpage-openapi.yml
+    type: OpenAPI
+  description: Retrieve full opinion data by opinion ID, reporter citation, or docket
+    number, with bulk reads of up to 100 items per request. Optionally include full
+    HTML opinion content and detailed citator treatments via the POST /opinions/get
+    endpoint.
+- aid: midpage:citations
+  name: Midpage Citations API
+  tags:
+  - Citations
+  - Citator
+  - Treatments
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://midpage-docs.apidocumentation.com/
+  baseURL: https://app.midpage.ai/api/v1
+  properties:
+  - url: https://midpage-docs.apidocumentation.com/
+    type: Documentation
+  - url: openapi/midpage-openapi.yml
+    type: OpenAPI
+  description: Bluebook-style citation lookup and AI-powered citator data returned
+    with retrieved opinions - reporter citations, citation counts, an overall treatment
+    signal (Negative, Caution, Neutral), and per-citing-opinion treatment detail with
+    supporting quotes.
+- aid: midpage:semantic-search
+  name: Midpage Semantic Search API
+  tags:
+  - Semantic Search
+  - Vector
+  - Embeddings
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://midpage-docs.apidocumentation.com/
+  baseURL: https://app.midpage.ai/api/v1
+  properties:
+  - url: https://midpage-docs.apidocumentation.com/
+    type: Documentation
+  - url: openapi/midpage-openapi.yml
+    type: OpenAPI
+  description: Vector similarity search over court opinions using AI embeddings, ranking
+    results by semantic similarity for conceptual queries. Exposed as the `semantic`
+    mode of the POST /search endpoint and combined with keyword search in `hybrid`
+    mode.
+- aid: midpage:mcp
+  name: Midpage MCP Server
+  tags:
+  - MCP
+  - Model Context Protocol
+  - Agents
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://www.midpage.ai/integrations
+  baseURL: https://app.midpage.ai/mcp/v3
+  properties:
+  - url: https://www.midpage.ai/integrations
+    type: Documentation
+  description: Remote Model Context Protocol server (OAuth-authenticated) that gives
+    AI assistants like Claude, ChatGPT, and Perplexity source-grounded legal research
+    tools - search, findInOpinion, analyzeOpinion, and preview docket tools
+    (analyzeDocketReport, analyzeDocketFiling). Versioned tool contracts are served
+    at /mcp/v1, /mcp/v2, and /mcp/v3.
+common:
+- type: LinkedIn
+  url: https://www.linkedin.com/company/midpage
+- type: Website
+  url: https://www.midpage.ai/
+- type: Documentation
+  url: https://midpage-docs.apidocumentation.com/
+- type: Plans
+  url: plans/midpage-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/midpage-rate-limits.yml
+- type: FinOps
+  url: finops/midpage-finops.yml
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com
