@@ -1,0 +1,14 @@
+generated: '2026-07-11'
+method: derived
+source: openapi/midpage-openapi.yml
+summary:
+  types:
+  - http
+schemes:
+- name: apiKey
+  type: http
+  scheme: bearer
+  description: API key authentication. Get your API key from the Midpage Developer Portal at
+    https://app.midpage.ai/developers
+  sources:
+  - openapi/midpage-openapi.yml

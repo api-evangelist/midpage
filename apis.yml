@@ -111,6 +111,10 @@ apis:
     (analyzeDocketReport, analyzeDocketFiling). Versioned tool contracts are served
     at /mcp/v1, /mcp/v2, and /mcp/v3.
 common:
+- type: DomainSecurity
+  url: security/midpage-domain-security.yml
+- type: Authentication
+  url: authentication/midpage-authentication.yml
 - type: LinkedIn
   url: https://www.linkedin.com/company/midpage
 - type: Website
