@@ -111,6 +111,8 @@ apis:
     (analyzeDocketReport, analyzeDocketFiling). Versioned tool contracts are served
     at /mcp/v1, /mcp/v2, and /mcp/v3.
 common:
+- type: AgenticAccess
+  url: agentic-access/midpage-agentic-access.yml
 - type: DomainSecurity
   url: security/midpage-domain-security.yml
 - type: Authentication
