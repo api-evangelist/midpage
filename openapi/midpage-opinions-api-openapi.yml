@@ -1,0 +1,246 @@
+openapi: 3.0.1
+info:
+  title: Midpage Legal Database Opinions API
+  description: REST API for Midpage's US legal database ("Caselaw Building Blocks"). Search court opinions with semantic (vector), keyword (full-text), or hybrid search; retrieve full opinion data by ID, citation, or docket number with citator treatments; and read the authenticated user's identity and subscription status. Authenticate with a bearer token (API key) in the Authorization header.
+  termsOfService: https://www.midpage.ai/
+  contact:
+    name: Midpage
+    url: https://www.midpage.ai/
+  version: '1.0'
+servers:
+- url: https://app.midpage.ai/api/v1
+  description: Production server
+security:
+- apiKey: []
+tags:
+- name: Opinions
+paths:
+  /opinions/get:
+    post:
+      operationId: getOpinions
+      tags:
+      - Opinions
+      summary: Get opinions
+      description: 'Retrieve full opinion data by ID, citation, or docket number. Supports bulk reads of up to 100 items per request. Provide exactly one of `opinion_ids`, `citations`, or `docket` (not multiple).
+
+        Lookup methods: `opinion_ids` (direct lookup, up to 100), `citations` (reporter citation, case-insensitive, up to 100), and `docket` (docket number + court; single lookup, may return multiple opinions).
+
+        When using `citations` or `docket`, a lookup may match multiple opinions (e.g., majority and dissent from the same case). The response includes `citation_matches` or `docket_matches` arrays showing which lookups matched which opinion IDs.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                opinion_ids:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of opinion IDs to retrieve
+                  example:
+                  - '8623588'
+                  - '1865773'
+                citations:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of citation strings to look up (case-insensitive)
+                  example:
+                  - 556 U.S. 662
+                  - 550 U.S. 544
+                docket:
+                  $ref: '#/components/schemas/DocketLookup'
+                include_content:
+                  type: boolean
+                  default: false
+                  description: Include full HTML content
+                include_detailed_treatments:
+                  type: boolean
+                  default: false
+                  description: Include citator treatments
+      responses:
+        '200':
+          description: Opinion data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  opinions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/OpinionFull'
+                  citation_matches:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CitationMatch'
+                    description: Only present when looking up by `citations`. Shows which citations matched which opinion IDs.
+                  docket_matches:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DocketMatch'
+                    description: Only present when looking up by `docket`. Shows which opinions matched.
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'Must provide one of: opinion_ids, citations (as arrays), or docket (object with docket_number)'
+components:
+  schemas:
+    DocketLookup:
+      type: object
+      description: Lookup by docket number and court. Requires docket_number and either court_id or court_abbreviation.
+      required:
+      - docket_number
+      properties:
+        docket_number:
+          type: string
+          description: The docket number (e.g., "19-1392", "1:23-cv-01234")
+          example: 19-1392
+        court_id:
+          type: string
+          description: Court identifier (e.g., "scotus", "ca9", "nysd")
+          example: scotus
+        court_abbreviation:
+          type: string
+          description: Court citation abbreviation (e.g., "SCOTUS", "9th Cir.", "S.D.N.Y.")
+          example: SCOTUS
+    DocketMatch:
+      type: object
+      description: Maps a docket lookup to the opinion(s) it matched
+      properties:
+        docket_number:
+          type: string
+          description: The docket number that matched
+          example: 19-1392
+        court_id:
+          type: string
+          description: Court identifier
+          example: scotus
+        court_abbreviation:
+          type: string
+          description: Court citation abbreviation
+          example: SCOTUS
+        opinion_id:
+          type: string
+          description: The matched opinion ID
+          example: '145875'
+    Citation:
+      type: object
+      properties:
+        cited_as:
+          type: string
+          description: Full citation string
+        volume:
+          type: string
+          description: Reporter volume
+        reporter:
+          type: string
+          description: Reporter abbreviation
+        page:
+          type: string
+          description: Starting page
+    CitationMatch:
+      type: object
+      description: Maps a requested citation to the opinion(s) it matched
+      properties:
+        citation:
+          type: string
+          description: The citation string from the request
+          example: 556 U.S. 662
+        opinion_id:
+          type: string
+          description: The matched opinion ID
+          example: '145875'
+    OpinionFull:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Opinion identifier
+        case_name:
+          type: string
+          description: Case name/caption
+        court_id:
+          type: string
+          description: Court identifier
+        court_abbreviation:
+          type: string
+          description: Citation abbreviation
+        docket_number:
+          type: string
+          description: Court docket number
+        date_filed:
+          type: string
+          format: date
+          description: Filing date
+        state:
+          type: string
+          nullable: true
+          description: State name (null for federal courts)
+        publish_status:
+          type: string
+          enum:
+          - published
+          - unpublished
+          - unknown
+          - in_chambers
+          - separate
+          - errata
+          - relating_to
+          description: Publication status for the opinion. Missing or uncertain metadata is returned as unknown.
+        judge_name:
+          type: string
+          description: Authoring judge
+        citations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Citation'
+        citation_count:
+          type: integer
+          description: Number of times this opinion is cited by other opinions
+        overall_treatment:
+          type: string
+          nullable: true
+          enum:
+          - Negative
+          - Caution
+          - Neutral
+          description: 'Most negative treatment category from all citing opinions. Always returned. Priority: Negative > Caution > Neutral > null (no treatment data).'
+        treatments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Treatment'
+          description: Citator treatments (only included if include_detailed_treatments=true)
+        html_content:
+          type: string
+          description: Full opinion text in HTML (only included if include_content=true)
+    Treatment:
+      type: object
+      properties:
+        citing_id:
+          type: string
+          description: ID of opinion citing this one
+        treatment_category:
+          type: string
+          description: Treatment type
+        treatment_description:
+          type: string
+          description: Detailed treatment
+        is_authoritative:
+          type: boolean
+          description: Whether authoritative
+        supporting_quote:
+          type: string
+          description: Quote supporting the treatment
+  securitySchemes:
+    apiKey:
+      type: http
+      scheme: bearer
+      description: API key authentication. Get your API key from the Midpage Developer Portal at https://app.midpage.ai/developers

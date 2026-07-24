@@ -1,0 +1,335 @@
+openapi: 3.0.1
+info:
+  title: Midpage Legal Database Opinions Search API
+  description: REST API for Midpage's US legal database ("Caselaw Building Blocks"). Search court opinions with semantic (vector), keyword (full-text), or hybrid search; retrieve full opinion data by ID, citation, or docket number with citator treatments; and read the authenticated user's identity and subscription status. Authenticate with a bearer token (API key) in the Authorization header.
+  termsOfService: https://www.midpage.ai/
+  contact:
+    name: Midpage
+    url: https://www.midpage.ai/
+  version: '1.0'
+servers:
+- url: https://app.midpage.ai/api/v1
+  description: Production server
+security:
+- apiKey: []
+tags:
+- name: Search
+paths:
+  /search:
+    post:
+      operationId: searchOpinions
+      tags:
+      - Search
+      summary: Search opinions
+      description: 'Search for opinions using semantic (vector), keyword (full-text), or hybrid search.
+
+        Search modes: `semantic` (vector similarity using AI embeddings), `keyword` (Elasticsearch full-text with Lexis/Westlaw-style boolean operators), and `hybrid` (semantic + keyword combined with reciprocal rank fusion and deduplication).
+
+        Boolean operators (keyword mode only, must be UPPERCASE): AND, OR, NOT, "..." (exact phrase), * and ? (wildcards), W/n (proximity within n words), and () for grouping.
+
+        Pagination uses `page` (1-indexed) and `page_size` (max 100). Semantic search supports limited deep pagination (~500 unique results); keyword and hybrid support deep pagination via Elasticsearch.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchRequest'
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: query is required and must be a string
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Unauthorized
+                  message:
+                    type: string
+                    example: Invalid API key
+components:
+  schemas:
+    PaginationMeta:
+      type: object
+      properties:
+        page:
+          type: integer
+          description: Current page number
+        page_size:
+          type: integer
+          description: Results per page
+        total_results:
+          type: integer
+          description: Total matching results (capped at 10,000 for keyword/hybrid)
+        total_pages:
+          type: integer
+          description: Total pages available
+        has_next:
+          type: boolean
+          description: Whether more pages exist
+        has_prev:
+          type: boolean
+          description: Whether previous pages exist
+    SearchResponse:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchResultItem'
+        pagination:
+          $ref: '#/components/schemas/PaginationMeta'
+        metadata:
+          type: object
+          properties:
+            mode:
+              type: string
+              enum:
+              - semantic
+              - keyword
+              - hybrid
+              description: Search mode used
+            query:
+              type: string
+              description: Original query
+            processing_time_ms:
+              type: integer
+              description: Server processing time in milliseconds
+            boolean_query:
+              type: object
+              description: Present in keyword mode when boolean operators are detected
+              properties:
+                detected:
+                  type: boolean
+                  description: Whether boolean operators were detected
+                operators:
+                  type: array
+                  items:
+                    type: string
+                  description: List of detected operators (e.g., ["AND", "OR", "W/5"])
+        facets:
+          $ref: '#/components/schemas/SearchFacets'
+    SearchRequest:
+      type: object
+      required:
+      - query
+      properties:
+        query:
+          type: string
+          description: Search query text
+          example: breach of fiduciary duty
+        mode:
+          type: string
+          enum:
+          - semantic
+          - keyword
+          - hybrid
+          default: semantic
+          description: 'Search mode: `semantic` (vector similarity, default), `keyword` (full-text), or `hybrid` (combined semantic and keyword results using reciprocal rank fusion).'
+        page:
+          type: integer
+          minimum: 1
+          default: 1
+          description: Page number (1-indexed)
+        page_size:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+          description: Results per page (max 100)
+        filters:
+          $ref: '#/components/schemas/SearchFilters'
+        include_facets:
+          type: boolean
+          default: false
+          description: Include facet breakdowns in the response showing result counts by court, jurisdiction, state, and year. Facets are only available in `keyword` and `hybrid` modes (not `semantic`). In `hybrid` mode, facet counts reflect keyword search results only.
+    SearchFilters:
+      type: object
+      description: Optional filters to narrow search results
+      properties:
+        court_ids:
+          type: array
+          items:
+            type: string
+          description: Filter by court IDs (e.g., "ca9", "scotus", "nysd")
+          example:
+          - ca9
+          - ca2
+        jurisdictions:
+          type: array
+          items:
+            type: string
+            enum:
+            - Federal Appellate
+            - Federal District
+            - State Supreme
+            - State Appellate
+            - State Trial
+            - Federal Bankruptcy
+            - Federal Bankruptcy Panel
+            - Federal Special
+            - Military Appellate
+            - State Attorney General
+            - State Special
+            - U.S. Territory
+            - Committee
+            - International
+            - Tribal
+            - Tribal Appellate
+            - Tribal Supreme
+            - Tribal Trial
+          description: Filter by jurisdiction type using canonical values from Midpage court metadata.
+          example:
+          - Federal Appellate
+          - State Supreme
+        states:
+          type: array
+          items:
+            type: string
+          description: Filter by state using full canonical names from Midpage court metadata.
+          example:
+          - California
+          - New York
+        publish_status:
+          type: string
+          description: Filter by publication status. Use `unknown` to include opinions where publication metadata is missing or uncertain.
+          enum:
+          - published
+          - unpublished
+          - unknown
+          - in_chambers
+          - separate
+          - errata
+          - relating_to
+          example: published
+        date_filed:
+          type: object
+          description: Filter by filing date range
+          properties:
+            start:
+              type: string
+              format: date
+              description: Start date (YYYY-MM-DD)
+              example: '2020-01-01'
+            end:
+              type: string
+              format: date
+              description: End date (YYYY-MM-DD)
+              example: '2024-12-31'
+    SearchResultItem:
+      type: object
+      properties:
+        opinion_id:
+          type: string
+          description: Opinion identifier
+        score:
+          type: number
+          description: 'Relevance score. Scale varies by mode: semantic 0-1 (cosine similarity), keyword 0-100+ (BM25 score).'
+        case_name:
+          type: string
+          description: Case name/caption
+        court_id:
+          type: string
+          description: Court identifier
+        court_name:
+          type: string
+          description: Full court name
+        court_abbreviation:
+          type: string
+          description: Court citation abbreviation
+        jurisdiction:
+          type: string
+          description: Jurisdiction type
+        state:
+          type: string
+          nullable: true
+          description: State name (null for federal courts)
+        publish_status:
+          type: string
+          nullable: true
+          description: Publication status, when available
+          enum:
+          - published
+          - unpublished
+          - unknown
+          - in_chambers
+          - separate
+          - errata
+          - relating_to
+        date_filed:
+          type: string
+          format: date
+          description: Filing date (YYYY-MM-DD)
+        docket_number:
+          type: string
+          nullable: true
+          description: Court docket number, when available
+        snippet:
+          type: string
+          description: Relevant text excerpt from the opinion
+        source:
+          type: string
+          enum:
+          - semantic
+          - keyword
+          description: 'Source of this result. Always present in API responses: semantic mode "semantic", keyword mode "keyword", hybrid mode varies per item.'
+    SearchFacets:
+      type: object
+      description: 'Facet breakdowns showing result counts by various dimensions. Only present when `include_facets: true` in request and mode is `keyword` or `hybrid`. Counts are computed across the full result set (after filters), not just the current page.'
+      properties:
+        court_abbreviation:
+          type: array
+          items:
+            $ref: '#/components/schemas/FacetBucket'
+          description: Breakdown by court abbreviation (e.g., "9th Cir.", "S.D.N.Y.")
+        jurisdiction:
+          type: array
+          items:
+            $ref: '#/components/schemas/FacetBucket'
+          description: Breakdown by jurisdiction type
+        state:
+          type: array
+          items:
+            $ref: '#/components/schemas/FacetBucket'
+          description: Breakdown by state name
+        year_filed:
+          type: array
+          items:
+            $ref: '#/components/schemas/FacetBucket'
+          description: Breakdown by filing year
+        note:
+          type: string
+          description: Explanatory note about facet limitations.
+          example: Facet counts reflect keyword search results only; semantic (Pinecone) results are not included in these counts.
+    FacetBucket:
+      type: object
+      description: A single bucket in a facet breakdown
+      properties:
+        key:
+          type: string
+          description: The value (e.g., "9th Cir.", "Federal Appellate", "2024")
+        count:
+          type: integer
+          description: Number of documents matching this value
+  securitySchemes:
+    apiKey:
+      type: http
+      scheme: bearer
+      description: API key authentication. Get your API key from the Midpage Developer Portal at https://app.midpage.ai/developers

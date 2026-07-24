@@ -1,0 +1,63 @@
+openapi: 3.0.1
+info:
+  title: Midpage Legal Database Opinions User API
+  description: REST API for Midpage's US legal database ("Caselaw Building Blocks"). Search court opinions with semantic (vector), keyword (full-text), or hybrid search; retrieve full opinion data by ID, citation, or docket number with citator treatments; and read the authenticated user's identity and subscription status. Authenticate with a bearer token (API key) in the Authorization header.
+  termsOfService: https://www.midpage.ai/
+  contact:
+    name: Midpage
+    url: https://www.midpage.ai/
+  version: '1.0'
+servers:
+- url: https://app.midpage.ai/api/v1
+  description: Production server
+security:
+- apiKey: []
+tags:
+- name: User
+paths:
+  /me:
+    get:
+      operationId: getCurrentUser
+      tags:
+      - User
+      summary: Get current user
+      description: 'Retrieve the authenticated user''s Midpage identity and current subscription status. Authenticate with a bearer token in the Authorization header. Supported bearer tokens: OAuth access token or API key. Common subscription statuses: `active`, `trialing`, `past_due`, `canceled`. If no subscription status is available, `subscriptionStatus` may be `null`.'
+      responses:
+        '200':
+          description: Current user profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurrentUserResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Unauthorized
+components:
+  schemas:
+    CurrentUserResponse:
+      type: object
+      required:
+      - userId
+      - subscriptionStatus
+      properties:
+        userId:
+          type: string
+          description: Midpage user identifier
+          example: user_123
+        subscriptionStatus:
+          type: string
+          nullable: true
+          description: Current subscription status. Common values include `active`, `trialing`, `past_due`, and `canceled`. May be `null` if no subscription status is available.
+          example: active
+  securitySchemes:
+    apiKey:
+      type: http
+      scheme: bearer
+      description: API key authentication. Get your API key from the Midpage Developer Portal at https://app.midpage.ai/developers
