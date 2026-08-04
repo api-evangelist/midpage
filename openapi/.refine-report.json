@@ -1,0 +1,18 @@
+{
+  "provider": "midpage",
+  "sources": [
+    "midpage-opinions-api-openapi.yml",
+    "midpage-search-api-openapi.yml",
+    "midpage-user-api-openapi.yml"
+  ],
+  "outputs": [
+    "midpage-opinions-api-openapi.yml",
+    "midpage-search-api-openapi.yml",
+    "midpage-user-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}
