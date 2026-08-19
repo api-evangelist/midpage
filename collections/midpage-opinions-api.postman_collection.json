@@ -1,0 +1,194 @@
+{
+  "item": [
+    {
+      "id": "71c90319-c1ed-4fac-acd7-cfe3baa0ba15",
+      "name": "Opinions",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "ae2210d4-a9ab-451e-9d9e-3cb1eb6608c5",
+          "name": "Get opinions",
+          "request": {
+            "name": "Get opinions",
+            "description": {
+              "content": "Retrieve full opinion data by ID, citation, or docket number. Supports bulk reads of up to 100 items per request. Provide exactly one of `opinion_ids`, `citations`, or `docket` (not multiple).\nLookup methods: `opinion_ids` (direct lookup, up to 100), `citations` (reporter citation, case-insensitive, up to 100), and `docket` (docket number + court; single lookup, may return multiple opinions).\nWhen using `citations` or `docket`, a lookup may match multiple opinions (e.g., majority and dissent from the same case). The response includes `citation_matches` or `docket_matches` arrays showing which lookups matched which opinion IDs.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "opinions",
+                "get"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"opinion_ids\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"citations\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"docket\": {\n    \"docket_number\": \"<string>\",\n    \"court_id\": \"<string>\",\n    \"court_abbreviation\": \"<string>\"\n  },\n  \"include_content\": false,\n  \"include_detailed_treatments\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "f11c480e-3652-4884-84ae-4baea8fcbcac",
+              "name": "Opinion data",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "opinions",
+                    "get"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"opinion_ids\": [\n    \"8623588\",\n    \"1865773\"\n  ],\n  \"citations\": [\n    \"556 U.S. 662\",\n    \"550 U.S. 544\"\n  ],\n  \"docket\": {\n    \"docket_number\": \"19-1392\",\n    \"court_id\": \"scotus\",\n    \"court_abbreviation\": \"SCOTUS\"\n  },\n  \"include_content\": false,\n  \"include_detailed_treatments\": false\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"opinions\": [\n    {\n      \"id\": \"string\",\n      \"case_name\": \"string\",\n      \"court_id\": \"string\",\n      \"court_abbreviation\": \"string\",\n      \"docket_number\": \"string\",\n      \"date_filed\": \"1992-08-14\",\n      \"state\": \"string\",\n      \"publish_status\": \"separate\",\n      \"judge_name\": \"string\",\n      \"citations\": [\n        {\n          \"cited_as\": \"string\",\n          \"volume\": \"string\",\n          \"reporter\": \"string\",\n          \"page\": \"string\"\n        },\n        {\n          \"cited_as\": \"string\",\n          \"volume\": \"string\",\n          \"reporter\": \"string\",\n          \"page\": \"string\"\n        }\n      ],\n      \"citation_count\": 9091,\n      \"overall_treatment\": \"Negative\",\n      \"treatments\": [\n        {\n          \"citing_id\": \"string\",\n          \"treatment_category\": \"string\",\n          \"treatment_description\": \"string\",\n          \"is_authoritative\": false,\n          \"supporting_quote\": \"string\"\n        },\n        {\n          \"citing_id\": \"string\",\n          \"treatment_category\": \"string\",\n          \"treatment_description\": \"string\",\n          \"is_authoritative\": true,\n          \"supporting_quote\": \"string\"\n        }\n      ],\n      \"html_content\": \"string\"\n    },\n    {\n      \"id\": \"string\",\n      \"case_name\": \"string\",\n      \"court_id\": \"string\",\n      \"court_abbreviation\": \"string\",\n      \"docket_number\": \"string\",\n      \"date_filed\": \"1991-10-28\",\n      \"state\": \"string\",\n      \"publish_status\": \"published\",\n      \"judge_name\": \"string\",\n      \"citations\": [\n        {\n          \"cited_as\": \"string\",\n          \"volume\": \"string\",\n          \"reporter\": \"string\",\n          \"page\": \"string\"\n        },\n        {\n          \"cited_as\": \"string\",\n          \"volume\": \"string\",\n          \"reporter\": \"string\",\n          \"page\": \"string\"\n        }\n      ],\n      \"citation_count\": 6676,\n      \"overall_treatment\": \"Negative\",\n      \"treatments\": [\n        {\n          \"citing_id\": \"string\",\n          \"treatment_category\": \"string\",\n          \"treatment_description\": \"string\",\n          \"is_authoritative\": false,\n          \"supporting_quote\": \"string\"\n        },\n        {\n          \"citing_id\": \"string\",\n          \"treatment_category\": \"string\",\n          \"treatment_description\": \"string\",\n          \"is_authoritative\": true,\n          \"supporting_quote\": \"string\"\n        }\n      ],\n      \"html_content\": \"string\"\n    }\n  ],\n  \"citation_matches\": [\n    {\n      \"citation\": \"556 U.S. 662\",\n      \"opinion_id\": \"145875\"\n    },\n    {\n      \"citation\": \"556 U.S. 662\",\n      \"opinion_id\": \"145875\"\n    }\n  ],\n  \"docket_matches\": [\n    {\n      \"docket_number\": \"19-1392\",\n      \"court_id\": \"scotus\",\n      \"court_abbreviation\": \"SCOTUS\",\n      \"opinion_id\": \"145875\"\n    },\n    {\n      \"docket_number\": \"19-1392\",\n      \"court_id\": \"scotus\",\n      \"court_abbreviation\": \"SCOTUS\",\n      \"opinion_id\": \"145875\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "163e265a-571f-422e-bb5a-1e3a20cc87a8",
+              "name": "Bad request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "opinions",
+                    "get"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"opinion_ids\": [\n    \"8623588\",\n    \"1865773\"\n  ],\n  \"citations\": [\n    \"556 U.S. 662\",\n    \"550 U.S. 544\"\n  ],\n  \"docket\": {\n    \"docket_number\": \"19-1392\",\n    \"court_id\": \"scotus\",\n    \"court_abbreviation\": \"SCOTUS\"\n  },\n  \"include_content\": false,\n  \"include_detailed_treatments\": false\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"Must provide one of: opinion_ids, citations (as arrays), or docket (object with docket_number)\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://app.midpage.ai/api/v1",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "da4aa42a-edf6-44f4-9903-75e6f05cdf55",
+    "name": "Midpage Legal Database Opinions API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "REST API for Midpage's US legal database (\"Caselaw Building Blocks\"). Search court opinions with semantic (vector), keyword (full-text), or hybrid search; retrieve full opinion data by ID, citation, or docket number with citator treatments; and read the authenticated user's identity and subscription status. Authenticate with a bearer token (API key) in the Authorization header.\n\nContact Support:\n Name: Midpage",
+      "type": "text/plain"
+    }
+  }
+}

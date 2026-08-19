@@ -1,0 +1,39 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Midpage Legal Database Opinions Search API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Search",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Search opinions",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.midpage.ai/api/v1/search",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Search for opinions using semantic (vector), keyword (full-text), or hybrid search.\nSearch modes: `semantic` (vector similarity using AI embeddings), `keyword` (Elasticsearch full-text with Lexis/Westlaw-style boolean operators), and `hybrid` (semantic + keyword combined with reciprocal rank fusion and deduplication).\nBoolean operators (keyword mode only, must be UPPERCASE): AND, OR, NOT, \"...\" (exact phrase), * and ? (wildcards), W/n (proximity within n words), and () for grouping.\nPagination u"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,39 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Midpage Legal Database Opinions API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Opinions",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get opinions",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.midpage.ai/api/v1/opinions/get",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Retrieve full opinion data by ID, citation, or docket number. Supports bulk reads of up to 100 items per request. Provide exactly one of `opinion_ids`, `citations`, or `docket` (not multiple).\nLookup methods: `opinion_ids` (direct lookup, up to 100), `citations` (reporter citation, case-insensitive, up to 100), and `docket` (docket number + court; single lookup, may return multiple opinions).\nWhen using `citations` or `docket`, a lookup may match multiple opinions (e.g., majority and dissent fro"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,35 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Midpage Legal Database Opinions User API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "User",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get current user",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://app.midpage.ai/api/v1/me"
+          },
+          "docs": "Retrieve the authenticated user's Midpage identity and current subscription status. Authenticate with a bearer token in the Authorization header. Supported bearer tokens: OAuth access token or API key. Common subscription statuses: `active`, `trialing`, `past_due`, `canceled`. If no subscription status is available, `subscriptionStatus` may be `null`."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

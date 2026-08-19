@@ -1,0 +1,242 @@
+{
+  "item": [
+    {
+      "id": "9c324834-a753-430c-92b5-0e48c0a39d0f",
+      "name": "Search",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "5b49444f-0147-4e23-9eb6-1c5adf6f9b10",
+          "name": "Search opinions",
+          "request": {
+            "name": "Search opinions",
+            "description": {
+              "content": "Search for opinions using semantic (vector), keyword (full-text), or hybrid search.\nSearch modes: `semantic` (vector similarity using AI embeddings), `keyword` (Elasticsearch full-text with Lexis/Westlaw-style boolean operators), and `hybrid` (semantic + keyword combined with reciprocal rank fusion and deduplication).\nBoolean operators (keyword mode only, must be UPPERCASE): AND, OR, NOT, \"...\" (exact phrase), * and ? (wildcards), W/n (proximity within n words), and () for grouping.\nPagination uses `page` (1-indexed) and `page_size` (max 100). Semantic search supports limited deep pagination (~500 unique results); keyword and hybrid support deep pagination via Elasticsearch.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "search"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"<string>\",\n  \"mode\": \"semantic\",\n  \"page\": 1,\n  \"page_size\": 20,\n  \"filters\": {\n    \"court_ids\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"jurisdictions\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"states\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"publish_status\": \"<string>\",\n    \"date_filed\": {\n      \"start\": \"<date>\",\n      \"end\": \"<date>\"\n    }\n  },\n  \"include_facets\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "b6633f62-cbbf-4ebf-975b-4da45d12e543",
+              "name": "Search results",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "search"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"query\": \"breach of fiduciary duty\",\n  \"mode\": \"semantic\",\n  \"page\": 1,\n  \"page_size\": 20,\n  \"filters\": {\n    \"court_ids\": [\n      \"ca9\",\n      \"ca2\"\n    ],\n    \"jurisdictions\": [\n      \"Federal Appellate\",\n      \"State Supreme\"\n    ],\n    \"states\": [\n      \"California\",\n      \"New York\"\n    ],\n    \"publish_status\": \"published\",\n    \"date_filed\": {\n      \"start\": \"2020-01-01\",\n      \"end\": \"2024-12-31\"\n    }\n  },\n  \"include_facets\": false\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"results\": [\n    {\n      \"opinion_id\": \"string\",\n      \"score\": 5179.017128759956,\n      \"case_name\": \"string\",\n      \"court_id\": \"string\",\n      \"court_name\": \"string\",\n      \"court_abbreviation\": \"string\",\n      \"jurisdiction\": \"string\",\n      \"state\": \"string\",\n      \"publish_status\": \"in_chambers\",\n      \"date_filed\": \"1986-08-05\",\n      \"docket_number\": \"string\",\n      \"snippet\": \"string\",\n      \"source\": \"keyword\"\n    },\n    {\n      \"opinion_id\": \"string\",\n      \"score\": 8105.102931390542,\n      \"case_name\": \"string\",\n      \"court_id\": \"string\",\n      \"court_name\": \"string\",\n      \"court_abbreviation\": \"string\",\n      \"jurisdiction\": \"string\",\n      \"state\": \"string\",\n      \"publish_status\": \"separate\",\n      \"date_filed\": \"2025-01-30\",\n      \"docket_number\": \"string\",\n      \"snippet\": \"string\",\n      \"source\": \"keyword\"\n    }\n  ],\n  \"pagination\": {\n    \"page\": 7649,\n    \"page_size\": 8155,\n    \"total_results\": 6216,\n    \"total_pages\": 1695,\n    \"has_next\": true,\n    \"has_prev\": true\n  },\n  \"metadata\": {\n    \"mode\": \"keyword\",\n    \"query\": \"string\",\n    \"processing_time_ms\": 4138,\n    \"boolean_query\": {\n      \"detected\": false,\n      \"operators\": [\n        \"string\",\n        \"string\"\n      ]\n    }\n  },\n  \"facets\": {\n    \"court_abbreviation\": [\n      {\n        \"key\": \"string\",\n        \"count\": 7220\n      },\n      {\n        \"key\": \"string\",\n        \"count\": 8571\n      }\n    ],\n    \"jurisdiction\": [\n      {\n        \"key\": \"string\",\n        \"count\": 8773\n      },\n      {\n        \"key\": \"string\",\n        \"count\": 745\n      }\n    ],\n    \"state\": [\n      {\n        \"key\": \"string\",\n        \"count\": 9748\n      },\n      {\n        \"key\": \"string\",\n        \"count\": 3887\n      }\n    ],\n    \"year_filed\": [\n      {\n        \"key\": \"string\",\n        \"count\": 1313\n      },\n      {\n        \"key\": \"string\",\n        \"count\": 4374\n      }\n    ],\n    \"note\": \"Facet counts reflect keyword search results only; semantic (Pinecone) results are not included in these counts.\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "02c98301-79c4-4127-8976-6ac48570592b",
+              "name": "Bad request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "search"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"query\": \"breach of fiduciary duty\",\n  \"mode\": \"semantic\",\n  \"page\": 1,\n  \"page_size\": 20,\n  \"filters\": {\n    \"court_ids\": [\n      \"ca9\",\n      \"ca2\"\n    ],\n    \"jurisdictions\": [\n      \"Federal Appellate\",\n      \"State Supreme\"\n    ],\n    \"states\": [\n      \"California\",\n      \"New York\"\n    ],\n    \"publish_status\": \"published\",\n    \"date_filed\": {\n      \"start\": \"2020-01-01\",\n      \"end\": \"2024-12-31\"\n    }\n  },\n  \"include_facets\": false\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"query is required and must be a string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c9c9eaab-57cd-4ffe-8925-813d9edf0509",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "search"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"query\": \"breach of fiduciary duty\",\n  \"mode\": \"semantic\",\n  \"page\": 1,\n  \"page_size\": 20,\n  \"filters\": {\n    \"court_ids\": [\n      \"ca9\",\n      \"ca2\"\n    ],\n    \"jurisdictions\": [\n      \"Federal Appellate\",\n      \"State Supreme\"\n    ],\n    \"states\": [\n      \"California\",\n      \"New York\"\n    ],\n    \"publish_status\": \"published\",\n    \"date_filed\": {\n      \"start\": \"2020-01-01\",\n      \"end\": \"2024-12-31\"\n    }\n  },\n  \"include_facets\": false\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"Unauthorized\",\n  \"message\": \"Invalid API key\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://app.midpage.ai/api/v1",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "16a4a32c-2742-475f-ac20-86c40673aae1",
+    "name": "Midpage Legal Database Opinions Search API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "REST API for Midpage's US legal database (\"Caselaw Building Blocks\"). Search court opinions with semantic (vector), keyword (full-text), or hybrid search; retrieve full opinion data by ID, citation, or docket number with citator treatments; and read the authenticated user's identity and subscription status. Authenticate with a bearer token (API key) in the Authorization header.\n\nContact Support:\n Name: Midpage",
+      "type": "text/plain"
+    }
+  }
+}
