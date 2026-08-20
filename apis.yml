@@ -27,6 +27,12 @@ tags:
 - Case Law
 - Legal Research
 - Search
+- Artificial Intelligence
+tags_raw:
+- Legal
+- Case Law
+- Legal Research
+- Search
 - AI
 created: '2026-06-21'
 modified: '2026-06-21'
@@ -35,6 +41,9 @@ apis:
 - aid: midpage:mcp
   name: Midpage MCP Server
   tags:
+  - MCP
+  - Agents
+  tags_raw:
   - MCP
   - Model Context Protocol
   - Agents
