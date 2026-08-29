@@ -8,6 +8,18 @@ description: Midpage is an AI-powered legal research and drafting platform built
   through a REST case-law API (semantic, keyword, and hybrid search; opinion retrieval;
   citator treatments), a Model Context Protocol (MCP) server for AI agents, and direct
   SQL read-replica access.
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: high
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: freemium
   onboarding: self-serve
