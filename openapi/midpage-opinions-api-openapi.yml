@@ -1,4 +1,4 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
   title: Midpage Legal Database Opinions API
   description: REST API for Midpage's US legal database ("Caselaw Building Blocks"). Search court opinions with semantic (vector), keyword (full-text), or hybrid search; retrieve full opinion data by ID, citation, or docket number with citator treatments; and read the authenticated user's identity and subscription status. Authenticate with a bearer token (API key) in the Authorization header.
@@ -93,6 +93,71 @@ paths:
                     example: 'Must provide one of: opinion_ids, citations (as arrays), or docket (object with docket_number)'
 components:
   schemas:
+    OpinionFull:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Opinion identifier
+        case_name:
+          type: string
+          description: Case name/caption
+        court_id:
+          type: string
+          description: Court identifier
+        court_abbreviation:
+          type: string
+          description: Citation abbreviation
+        docket_number:
+          type: string
+          description: Court docket number
+        date_filed:
+          type: string
+          format: date
+          description: Filing date
+        state:
+          type:
+          - string
+          - 'null'
+          description: State name (null for federal courts)
+        publish_status:
+          type: string
+          enum:
+          - published
+          - unpublished
+          - unknown
+          - in_chambers
+          - separate
+          - errata
+          - relating_to
+          description: Publication status for the opinion. Missing or uncertain metadata is returned as unknown.
+        judge_name:
+          type: string
+          description: Authoring judge
+        citations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Citation'
+        citation_count:
+          type: integer
+          description: Number of times this opinion is cited by other opinions
+        overall_treatment:
+          type:
+          - string
+          - 'null'
+          enum:
+          - Negative
+          - Caution
+          - Neutral
+          description: 'Most negative treatment category from all citing opinions. Always returned. Priority: Negative > Caution > Neutral > null (no treatment data).'
+        treatments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Treatment'
+          description: Citator treatments (only included if include_detailed_treatments=true)
+        html_content:
+          type: string
+          description: Full opinion text in HTML (only included if include_content=true)
     DocketLookup:
       type: object
       description: Lookup by docket number and court. Requires docket_number and either court_id or court_abbreviation.
@@ -131,21 +196,6 @@ components:
           type: string
           description: The matched opinion ID
           example: '145875'
-    Citation:
-      type: object
-      properties:
-        cited_as:
-          type: string
-          description: Full citation string
-        volume:
-          type: string
-          description: Reporter volume
-        reporter:
-          type: string
-          description: Reporter abbreviation
-        page:
-          type: string
-          description: Starting page
     CitationMatch:
       type: object
       description: Maps a requested citation to the opinion(s) it matched
@@ -158,69 +208,6 @@ components:
           type: string
           description: The matched opinion ID
           example: '145875'
-    OpinionFull:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Opinion identifier
-        case_name:
-          type: string
-          description: Case name/caption
-        court_id:
-          type: string
-          description: Court identifier
-        court_abbreviation:
-          type: string
-          description: Citation abbreviation
-        docket_number:
-          type: string
-          description: Court docket number
-        date_filed:
-          type: string
-          format: date
-          description: Filing date
-        state:
-          type: string
-          nullable: true
-          description: State name (null for federal courts)
-        publish_status:
-          type: string
-          enum:
-          - published
-          - unpublished
-          - unknown
-          - in_chambers
-          - separate
-          - errata
-          - relating_to
-          description: Publication status for the opinion. Missing or uncertain metadata is returned as unknown.
-        judge_name:
-          type: string
-          description: Authoring judge
-        citations:
-          type: array
-          items:
-            $ref: '#/components/schemas/Citation'
-        citation_count:
-          type: integer
-          description: Number of times this opinion is cited by other opinions
-        overall_treatment:
-          type: string
-          nullable: true
-          enum:
-          - Negative
-          - Caution
-          - Neutral
-          description: 'Most negative treatment category from all citing opinions. Always returned. Priority: Negative > Caution > Neutral > null (no treatment data).'
-        treatments:
-          type: array
-          items:
-            $ref: '#/components/schemas/Treatment'
-          description: Citator treatments (only included if include_detailed_treatments=true)
-        html_content:
-          type: string
-          description: Full opinion text in HTML (only included if include_content=true)
     Treatment:
       type: object
       properties:
@@ -239,6 +226,21 @@ components:
         supporting_quote:
           type: string
           description: Quote supporting the treatment
+    Citation:
+      type: object
+      properties:
+        cited_as:
+          type: string
+          description: Full citation string
+        volume:
+          type: string
+          description: Reporter volume
+        reporter:
+          type: string
+          description: Reporter abbreviation
+        page:
+          type: string
+          description: Starting page
   securitySchemes:
     apiKey:
       type: http

@@ -1,6 +1,6 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
-  title: Midpage Legal Database Opinions Search API
+  title: Midpage Legal Database Search API
   description: REST API for Midpage's US legal database ("Caselaw Building Blocks"). Search court opinions with semantic (vector), keyword (full-text), or hybrid search; retrieve full opinion data by ID, citation, or docket number with citator treatments; and read the authenticated user's identity and subscription status. Authenticate with a bearer token (API key) in the Authorization header.
   termsOfService: https://www.midpage.ai/
   contact:
@@ -66,100 +66,6 @@ paths:
                     example: Invalid API key
 components:
   schemas:
-    PaginationMeta:
-      type: object
-      properties:
-        page:
-          type: integer
-          description: Current page number
-        page_size:
-          type: integer
-          description: Results per page
-        total_results:
-          type: integer
-          description: Total matching results (capped at 10,000 for keyword/hybrid)
-        total_pages:
-          type: integer
-          description: Total pages available
-        has_next:
-          type: boolean
-          description: Whether more pages exist
-        has_prev:
-          type: boolean
-          description: Whether previous pages exist
-    SearchResponse:
-      type: object
-      properties:
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/SearchResultItem'
-        pagination:
-          $ref: '#/components/schemas/PaginationMeta'
-        metadata:
-          type: object
-          properties:
-            mode:
-              type: string
-              enum:
-              - semantic
-              - keyword
-              - hybrid
-              description: Search mode used
-            query:
-              type: string
-              description: Original query
-            processing_time_ms:
-              type: integer
-              description: Server processing time in milliseconds
-            boolean_query:
-              type: object
-              description: Present in keyword mode when boolean operators are detected
-              properties:
-                detected:
-                  type: boolean
-                  description: Whether boolean operators were detected
-                operators:
-                  type: array
-                  items:
-                    type: string
-                  description: List of detected operators (e.g., ["AND", "OR", "W/5"])
-        facets:
-          $ref: '#/components/schemas/SearchFacets'
-    SearchRequest:
-      type: object
-      required:
-      - query
-      properties:
-        query:
-          type: string
-          description: Search query text
-          example: breach of fiduciary duty
-        mode:
-          type: string
-          enum:
-          - semantic
-          - keyword
-          - hybrid
-          default: semantic
-          description: 'Search mode: `semantic` (vector similarity, default), `keyword` (full-text), or `hybrid` (combined semantic and keyword results using reciprocal rank fusion).'
-        page:
-          type: integer
-          minimum: 1
-          default: 1
-          description: Page number (1-indexed)
-        page_size:
-          type: integer
-          minimum: 1
-          maximum: 100
-          default: 20
-          description: Results per page (max 100)
-        filters:
-          $ref: '#/components/schemas/SearchFilters'
-        include_facets:
-          type: boolean
-          default: false
-          description: Include facet breakdowns in the response showing result counts by court, jurisdiction, state, and year. Facets are only available in `keyword` and `hybrid` modes (not `semantic`). In `hybrid` mode, facet counts reflect keyword search results only.
     SearchFilters:
       type: object
       description: Optional filters to narrow search results
@@ -258,12 +164,14 @@ components:
           type: string
           description: Jurisdiction type
         state:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
           description: State name (null for federal courts)
         publish_status:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
           description: Publication status, when available
           enum:
           - published
@@ -278,8 +186,9 @@ components:
           format: date
           description: Filing date (YYYY-MM-DD)
         docket_number:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
           description: Court docket number, when available
         snippet:
           type: string
@@ -290,6 +199,50 @@ components:
           - semantic
           - keyword
           description: 'Source of this result. Always present in API responses: semantic mode "semantic", keyword mode "keyword", hybrid mode varies per item.'
+    FacetBucket:
+      type: object
+      description: A single bucket in a facet breakdown
+      properties:
+        key:
+          type: string
+          description: The value (e.g., "9th Cir.", "Federal Appellate", "2024")
+        count:
+          type: integer
+          description: Number of documents matching this value
+    SearchRequest:
+      type: object
+      required:
+      - query
+      properties:
+        query:
+          type: string
+          description: Search query text
+          example: breach of fiduciary duty
+        mode:
+          type: string
+          enum:
+          - semantic
+          - keyword
+          - hybrid
+          default: semantic
+          description: 'Search mode: `semantic` (vector similarity, default), `keyword` (full-text), or `hybrid` (combined semantic and keyword results using reciprocal rank fusion).'
+        page:
+          type: integer
+          minimum: 1
+          default: 1
+          description: Page number (1-indexed)
+        page_size:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+          description: Results per page (max 100)
+        filters:
+          $ref: '#/components/schemas/SearchFilters'
+        include_facets:
+          type: boolean
+          default: false
+          description: Include facet breakdowns in the response showing result counts by court, jurisdiction, state, and year. Facets are only available in `keyword` and `hybrid` modes (not `semantic`). In `hybrid` mode, facet counts reflect keyword search results only.
     SearchFacets:
       type: object
       description: 'Facet breakdowns showing result counts by various dimensions. Only present when `include_facets: true` in request and mode is `keyword` or `hybrid`. Counts are computed across the full result set (after filters), not just the current page.'
@@ -318,16 +271,66 @@ components:
           type: string
           description: Explanatory note about facet limitations.
           example: Facet counts reflect keyword search results only; semantic (Pinecone) results are not included in these counts.
-    FacetBucket:
+    PaginationMeta:
       type: object
-      description: A single bucket in a facet breakdown
       properties:
-        key:
-          type: string
-          description: The value (e.g., "9th Cir.", "Federal Appellate", "2024")
-        count:
+        page:
           type: integer
-          description: Number of documents matching this value
+          description: Current page number
+        page_size:
+          type: integer
+          description: Results per page
+        total_results:
+          type: integer
+          description: Total matching results (capped at 10,000 for keyword/hybrid)
+        total_pages:
+          type: integer
+          description: Total pages available
+        has_next:
+          type: boolean
+          description: Whether more pages exist
+        has_prev:
+          type: boolean
+          description: Whether previous pages exist
+    SearchResponse:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchResultItem'
+        pagination:
+          $ref: '#/components/schemas/PaginationMeta'
+        metadata:
+          type: object
+          properties:
+            mode:
+              type: string
+              enum:
+              - semantic
+              - keyword
+              - hybrid
+              description: Search mode used
+            query:
+              type: string
+              description: Original query
+            processing_time_ms:
+              type: integer
+              description: Server processing time in milliseconds
+            boolean_query:
+              type: object
+              description: Present in keyword mode when boolean operators are detected
+              properties:
+                detected:
+                  type: boolean
+                  description: Whether boolean operators were detected
+                operators:
+                  type: array
+                  items:
+                    type: string
+                  description: List of detected operators (e.g., ["AND", "OR", "W/5"])
+        facets:
+          $ref: '#/components/schemas/SearchFacets'
   securitySchemes:
     apiKey:
       type: http

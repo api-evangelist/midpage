@@ -1,6 +1,6 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
-  title: Midpage Legal Database Opinions User API
+  title: Midpage Legal Database User API
   description: REST API for Midpage's US legal database ("Caselaw Building Blocks"). Search court opinions with semantic (vector), keyword (full-text), or hybrid search; retrieve full opinion data by ID, citation, or docket number with citator treatments; and read the authenticated user's identity and subscription status. Authenticate with a bearer token (API key) in the Authorization header.
   termsOfService: https://www.midpage.ai/
   contact:
@@ -52,8 +52,9 @@ components:
           description: Midpage user identifier
           example: user_123
         subscriptionStatus:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
           description: Current subscription status. Common values include `active`, `trialing`, `past_due`, and `canceled`. May be `null` if no subscription status is available.
           example: active
   securitySchemes:
