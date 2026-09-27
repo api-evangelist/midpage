@@ -158,24 +158,24 @@ components:
         html_content:
           type: string
           description: Full opinion text in HTML (only included if include_content=true)
-    DocketLookup:
+    Treatment:
       type: object
-      description: Lookup by docket number and court. Requires docket_number and either court_id or court_abbreviation.
-      required:
-      - docket_number
       properties:
-        docket_number:
+        citing_id:
           type: string
-          description: The docket number (e.g., "19-1392", "1:23-cv-01234")
-          example: 19-1392
-        court_id:
+          description: ID of opinion citing this one
+        treatment_category:
           type: string
-          description: Court identifier (e.g., "scotus", "ca9", "nysd")
-          example: scotus
-        court_abbreviation:
+          description: Treatment type
+        treatment_description:
           type: string
-          description: Court citation abbreviation (e.g., "SCOTUS", "9th Cir.", "S.D.N.Y.")
-          example: SCOTUS
+          description: Detailed treatment
+        is_authoritative:
+          type: boolean
+          description: Whether authoritative
+        supporting_quote:
+          type: string
+          description: Quote supporting the treatment
     DocketMatch:
       type: object
       description: Maps a docket lookup to the opinion(s) it matched
@@ -196,36 +196,24 @@ components:
           type: string
           description: The matched opinion ID
           example: '145875'
-    CitationMatch:
+    DocketLookup:
       type: object
-      description: Maps a requested citation to the opinion(s) it matched
+      description: Lookup by docket number and court. Requires docket_number and either court_id or court_abbreviation.
+      required:
+      - docket_number
       properties:
-        citation:
+        docket_number:
           type: string
-          description: The citation string from the request
-          example: 556 U.S. 662
-        opinion_id:
+          description: The docket number (e.g., "19-1392", "1:23-cv-01234")
+          example: 19-1392
+        court_id:
           type: string
-          description: The matched opinion ID
-          example: '145875'
-    Treatment:
-      type: object
-      properties:
-        citing_id:
+          description: Court identifier (e.g., "scotus", "ca9", "nysd")
+          example: scotus
+        court_abbreviation:
           type: string
-          description: ID of opinion citing this one
-        treatment_category:
-          type: string
-          description: Treatment type
-        treatment_description:
-          type: string
-          description: Detailed treatment
-        is_authoritative:
-          type: boolean
-          description: Whether authoritative
-        supporting_quote:
-          type: string
-          description: Quote supporting the treatment
+          description: Court citation abbreviation (e.g., "SCOTUS", "9th Cir.", "S.D.N.Y.")
+          example: SCOTUS
     Citation:
       type: object
       properties:
@@ -241,6 +229,18 @@ components:
         page:
           type: string
           description: Starting page
+    CitationMatch:
+      type: object
+      description: Maps a requested citation to the opinion(s) it matched
+      properties:
+        citation:
+          type: string
+          description: The citation string from the request
+          example: 556 U.S. 662
+        opinion_id:
+          type: string
+          description: The matched opinion ID
+          example: '145875'
   securitySchemes:
     apiKey:
       type: http
