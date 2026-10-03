@@ -66,6 +66,73 @@ paths:
                     example: Invalid API key
 components:
   schemas:
+    SearchResponse:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchResultItem'
+        pagination:
+          $ref: '#/components/schemas/PaginationMeta'
+        metadata:
+          type: object
+          properties:
+            mode:
+              type: string
+              enum:
+              - semantic
+              - keyword
+              - hybrid
+              description: Search mode used
+            query:
+              type: string
+              description: Original query
+            processing_time_ms:
+              type: integer
+              description: Server processing time in milliseconds
+            boolean_query:
+              type: object
+              description: Present in keyword mode when boolean operators are detected
+              properties:
+                detected:
+                  type: boolean
+                  description: Whether boolean operators were detected
+                operators:
+                  type: array
+                  items:
+                    type: string
+                  description: List of detected operators (e.g., ["AND", "OR", "W/5"])
+        facets:
+          $ref: '#/components/schemas/SearchFacets'
+    SearchFacets:
+      type: object
+      description: 'Facet breakdowns showing result counts by various dimensions. Only present when `include_facets: true` in request and mode is `keyword` or `hybrid`. Counts are computed across the full result set (after filters), not just the current page.'
+      properties:
+        court_abbreviation:
+          type: array
+          items:
+            $ref: '#/components/schemas/FacetBucket'
+          description: Breakdown by court abbreviation (e.g., "9th Cir.", "S.D.N.Y.")
+        jurisdiction:
+          type: array
+          items:
+            $ref: '#/components/schemas/FacetBucket'
+          description: Breakdown by jurisdiction type
+        state:
+          type: array
+          items:
+            $ref: '#/components/schemas/FacetBucket'
+          description: Breakdown by state name
+        year_filed:
+          type: array
+          items:
+            $ref: '#/components/schemas/FacetBucket'
+          description: Breakdown by filing year
+        note:
+          type: string
+          description: Explanatory note about facet limitations.
+          example: Facet counts reflect keyword search results only; semantic (Pinecone) results are not included in these counts.
     SearchRequest:
       type: object
       required:
@@ -100,6 +167,16 @@ components:
           type: boolean
           default: false
           description: Include facet breakdowns in the response showing result counts by court, jurisdiction, state, and year. Facets are only available in `keyword` and `hybrid` modes (not `semantic`). In `hybrid` mode, facet counts reflect keyword search results only.
+    FacetBucket:
+      type: object
+      description: A single bucket in a facet breakdown
+      properties:
+        key:
+          type: string
+          description: The value (e.g., "9th Cir.", "Federal Appellate", "2024")
+        count:
+          type: integer
+          description: Number of documents matching this value
     PaginationMeta:
       type: object
       properties:
@@ -121,34 +198,6 @@ components:
         has_prev:
           type: boolean
           description: Whether previous pages exist
-    SearchFacets:
-      type: object
-      description: 'Facet breakdowns showing result counts by various dimensions. Only present when `include_facets: true` in request and mode is `keyword` or `hybrid`. Counts are computed across the full result set (after filters), not just the current page.'
-      properties:
-        court_abbreviation:
-          type: array
-          items:
-            $ref: '#/components/schemas/FacetBucket'
-          description: Breakdown by court abbreviation (e.g., "9th Cir.", "S.D.N.Y.")
-        jurisdiction:
-          type: array
-          items:
-            $ref: '#/components/schemas/FacetBucket'
-          description: Breakdown by jurisdiction type
-        state:
-          type: array
-          items:
-            $ref: '#/components/schemas/FacetBucket'
-          description: Breakdown by state name
-        year_filed:
-          type: array
-          items:
-            $ref: '#/components/schemas/FacetBucket'
-          description: Breakdown by filing year
-        note:
-          type: string
-          description: Explanatory note about facet limitations.
-          example: Facet counts reflect keyword search results only; semantic (Pinecone) results are not included in these counts.
     SearchResultItem:
       type: object
       properties:
@@ -282,55 +331,6 @@ components:
               format: date
               description: End date (YYYY-MM-DD)
               example: '2024-12-31'
-    FacetBucket:
-      type: object
-      description: A single bucket in a facet breakdown
-      properties:
-        key:
-          type: string
-          description: The value (e.g., "9th Cir.", "Federal Appellate", "2024")
-        count:
-          type: integer
-          description: Number of documents matching this value
-    SearchResponse:
-      type: object
-      properties:
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/SearchResultItem'
-        pagination:
-          $ref: '#/components/schemas/PaginationMeta'
-        metadata:
-          type: object
-          properties:
-            mode:
-              type: string
-              enum:
-              - semantic
-              - keyword
-              - hybrid
-              description: Search mode used
-            query:
-              type: string
-              description: Original query
-            processing_time_ms:
-              type: integer
-              description: Server processing time in milliseconds
-            boolean_query:
-              type: object
-              description: Present in keyword mode when boolean operators are detected
-              properties:
-                detected:
-                  type: boolean
-                  description: Whether boolean operators were detected
-                operators:
-                  type: array
-                  items:
-                    type: string
-                  description: List of detected operators (e.g., ["AND", "OR", "W/5"])
-        facets:
-          $ref: '#/components/schemas/SearchFacets'
   securitySchemes:
     apiKey:
       type: http
