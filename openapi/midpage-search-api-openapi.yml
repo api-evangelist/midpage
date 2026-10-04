@@ -133,40 +133,6 @@ components:
           type: string
           description: Explanatory note about facet limitations.
           example: Facet counts reflect keyword search results only; semantic (Pinecone) results are not included in these counts.
-    SearchRequest:
-      type: object
-      required:
-      - query
-      properties:
-        query:
-          type: string
-          description: Search query text
-          example: breach of fiduciary duty
-        mode:
-          type: string
-          enum:
-          - semantic
-          - keyword
-          - hybrid
-          default: semantic
-          description: 'Search mode: `semantic` (vector similarity, default), `keyword` (full-text), or `hybrid` (combined semantic and keyword results using reciprocal rank fusion).'
-        page:
-          type: integer
-          minimum: 1
-          default: 1
-          description: Page number (1-indexed)
-        page_size:
-          type: integer
-          minimum: 1
-          maximum: 100
-          default: 20
-          description: Results per page (max 100)
-        filters:
-          $ref: '#/components/schemas/SearchFilters'
-        include_facets:
-          type: boolean
-          default: false
-          description: Include facet breakdowns in the response showing result counts by court, jurisdiction, state, and year. Facets are only available in `keyword` and `hybrid` modes (not `semantic`). In `hybrid` mode, facet counts reflect keyword search results only.
     FacetBucket:
       type: object
       description: A single bucket in a facet breakdown
@@ -198,66 +164,6 @@ components:
         has_prev:
           type: boolean
           description: Whether previous pages exist
-    SearchResultItem:
-      type: object
-      properties:
-        opinion_id:
-          type: string
-          description: Opinion identifier
-        score:
-          type: number
-          description: 'Relevance score. Scale varies by mode: semantic 0-1 (cosine similarity), keyword 0-100+ (BM25 score).'
-        case_name:
-          type: string
-          description: Case name/caption
-        court_id:
-          type: string
-          description: Court identifier
-        court_name:
-          type: string
-          description: Full court name
-        court_abbreviation:
-          type: string
-          description: Court citation abbreviation
-        jurisdiction:
-          type: string
-          description: Jurisdiction type
-        state:
-          type:
-          - string
-          - 'null'
-          description: State name (null for federal courts)
-        publish_status:
-          type:
-          - string
-          - 'null'
-          description: Publication status, when available
-          enum:
-          - published
-          - unpublished
-          - unknown
-          - in_chambers
-          - separate
-          - errata
-          - relating_to
-        date_filed:
-          type: string
-          format: date
-          description: Filing date (YYYY-MM-DD)
-        docket_number:
-          type:
-          - string
-          - 'null'
-          description: Court docket number, when available
-        snippet:
-          type: string
-          description: Relevant text excerpt from the opinion
-        source:
-          type: string
-          enum:
-          - semantic
-          - keyword
-          description: 'Source of this result. Always present in API responses: semantic mode "semantic", keyword mode "keyword", hybrid mode varies per item.'
     SearchFilters:
       type: object
       description: Optional filters to narrow search results
@@ -331,6 +237,100 @@ components:
               format: date
               description: End date (YYYY-MM-DD)
               example: '2024-12-31'
+    SearchRequest:
+      type: object
+      required:
+      - query
+      properties:
+        query:
+          type: string
+          description: Search query text
+          example: breach of fiduciary duty
+        mode:
+          type: string
+          enum:
+          - semantic
+          - keyword
+          - hybrid
+          default: semantic
+          description: 'Search mode: `semantic` (vector similarity, default), `keyword` (full-text), or `hybrid` (combined semantic and keyword results using reciprocal rank fusion).'
+        page:
+          type: integer
+          minimum: 1
+          default: 1
+          description: Page number (1-indexed)
+        page_size:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+          description: Results per page (max 100)
+        filters:
+          $ref: '#/components/schemas/SearchFilters'
+        include_facets:
+          type: boolean
+          default: false
+          description: Include facet breakdowns in the response showing result counts by court, jurisdiction, state, and year. Facets are only available in `keyword` and `hybrid` modes (not `semantic`). In `hybrid` mode, facet counts reflect keyword search results only.
+    SearchResultItem:
+      type: object
+      properties:
+        opinion_id:
+          type: string
+          description: Opinion identifier
+        score:
+          type: number
+          description: 'Relevance score. Scale varies by mode: semantic 0-1 (cosine similarity), keyword 0-100+ (BM25 score).'
+        case_name:
+          type: string
+          description: Case name/caption
+        court_id:
+          type: string
+          description: Court identifier
+        court_name:
+          type: string
+          description: Full court name
+        court_abbreviation:
+          type: string
+          description: Court citation abbreviation
+        jurisdiction:
+          type: string
+          description: Jurisdiction type
+        state:
+          type:
+          - string
+          - 'null'
+          description: State name (null for federal courts)
+        publish_status:
+          type:
+          - string
+          - 'null'
+          description: Publication status, when available
+          enum:
+          - published
+          - unpublished
+          - unknown
+          - in_chambers
+          - separate
+          - errata
+          - relating_to
+        date_filed:
+          type: string
+          format: date
+          description: Filing date (YYYY-MM-DD)
+        docket_number:
+          type:
+          - string
+          - 'null'
+          description: Court docket number, when available
+        snippet:
+          type: string
+          description: Relevant text excerpt from the opinion
+        source:
+          type: string
+          enum:
+          - semantic
+          - keyword
+          description: 'Source of this result. Always present in API responses: semantic mode "semantic", keyword mode "keyword", hybrid mode varies per item.'
   securitySchemes:
     apiKey:
       type: http

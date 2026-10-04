@@ -93,44 +93,6 @@ paths:
                     example: 'Must provide one of: opinion_ids, citations (as arrays), or docket (object with docket_number)'
 components:
   schemas:
-    DocketMatch:
-      type: object
-      description: Maps a docket lookup to the opinion(s) it matched
-      properties:
-        docket_number:
-          type: string
-          description: The docket number that matched
-          example: 19-1392
-        court_id:
-          type: string
-          description: Court identifier
-          example: scotus
-        court_abbreviation:
-          type: string
-          description: Court citation abbreviation
-          example: SCOTUS
-        opinion_id:
-          type: string
-          description: The matched opinion ID
-          example: '145875'
-    DocketLookup:
-      type: object
-      description: Lookup by docket number and court. Requires docket_number and either court_id or court_abbreviation.
-      required:
-      - docket_number
-      properties:
-        docket_number:
-          type: string
-          description: The docket number (e.g., "19-1392", "1:23-cv-01234")
-          example: 19-1392
-        court_id:
-          type: string
-          description: Court identifier (e.g., "scotus", "ca9", "nysd")
-          example: scotus
-        court_abbreviation:
-          type: string
-          description: Court citation abbreviation (e.g., "SCOTUS", "9th Cir.", "S.D.N.Y.")
-          example: SCOTUS
     Citation:
       type: object
       properties:
@@ -146,6 +108,24 @@ components:
         page:
           type: string
           description: Starting page
+    Treatment:
+      type: object
+      properties:
+        citing_id:
+          type: string
+          description: ID of opinion citing this one
+        treatment_category:
+          type: string
+          description: Treatment type
+        treatment_description:
+          type: string
+          description: Detailed treatment
+        is_authoritative:
+          type: boolean
+          description: Whether authoritative
+        supporting_quote:
+          type: string
+          description: Quote supporting the treatment
     OpinionFull:
       type: object
       properties:
@@ -211,24 +191,26 @@ components:
         html_content:
           type: string
           description: Full opinion text in HTML (only included if include_content=true)
-    Treatment:
+    DocketMatch:
       type: object
+      description: Maps a docket lookup to the opinion(s) it matched
       properties:
-        citing_id:
+        docket_number:
           type: string
-          description: ID of opinion citing this one
-        treatment_category:
+          description: The docket number that matched
+          example: 19-1392
+        court_id:
           type: string
-          description: Treatment type
-        treatment_description:
+          description: Court identifier
+          example: scotus
+        court_abbreviation:
           type: string
-          description: Detailed treatment
-        is_authoritative:
-          type: boolean
-          description: Whether authoritative
-        supporting_quote:
+          description: Court citation abbreviation
+          example: SCOTUS
+        opinion_id:
           type: string
-          description: Quote supporting the treatment
+          description: The matched opinion ID
+          example: '145875'
     CitationMatch:
       type: object
       description: Maps a requested citation to the opinion(s) it matched
@@ -241,6 +223,24 @@ components:
           type: string
           description: The matched opinion ID
           example: '145875'
+    DocketLookup:
+      type: object
+      description: Lookup by docket number and court. Requires docket_number and either court_id or court_abbreviation.
+      required:
+      - docket_number
+      properties:
+        docket_number:
+          type: string
+          description: The docket number (e.g., "19-1392", "1:23-cv-01234")
+          example: 19-1392
+        court_id:
+          type: string
+          description: Court identifier (e.g., "scotus", "ca9", "nysd")
+          example: scotus
+        court_abbreviation:
+          type: string
+          description: Court citation abbreviation (e.g., "SCOTUS", "9th Cir.", "S.D.N.Y.")
+          example: SCOTUS
   securitySchemes:
     apiKey:
       type: http
