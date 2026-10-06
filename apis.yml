@@ -47,7 +47,7 @@ tags_raw:
 - Search
 - AI
 created: '2026-06-21'
-modified: '2026-06-21'
+modified: '2026-10-06'
 specificationVersion: '0.23'
 apis:
 - aid: midpage:mcp
@@ -107,6 +107,8 @@ apis:
   - type: Documentation
     url: https://midpage-docs.apidocumentation.com/
 common:
+- url: https://www.midpage.ai/blog
+  type: Blog
 - type: AgenticAccess
   url: agentic-access/midpage-agentic-access.yml
 - type: DomainSecurity
