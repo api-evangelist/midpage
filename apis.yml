@@ -107,6 +107,8 @@ apis:
   - type: Documentation
     url: https://midpage-docs.apidocumentation.com/
 common:
+- type: Pricing
+  url: https://www.midpage.ai/pricing
 - url: https://www.midpage.ai/blog
   type: Blog
 - type: AgenticAccess
