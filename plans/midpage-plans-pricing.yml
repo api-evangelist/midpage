@@ -38,3 +38,27 @@ plans:
     plugins, AI research usage Standard
 rate_limit_statements:
 - '*Midpage reserves the right to suspend accounts with abnormally high usage indicative of abuse.'
+x-canonical:
+  generated: '2026-10-08'
+  vocabulary: all/0-working/economics/plans-canonical.yml
+  models:
+  - seat
+  units:
+  - seat
+  plans:
+  - name: Professional
+    access: other
+    model: seat
+    model_how: derived
+    units:
+    - seat
+    periods:
+    - month
+  - name: Law Student
+    access: other
+    model: seat
+    model_how: derived
+    units:
+    - seat
+    periods:
+    - month
