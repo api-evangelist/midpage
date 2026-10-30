@@ -1,4 +1,4 @@
-# Midpage (midpage)
+# Midpage
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -66,131 +66,121 @@
 
 Midpage is an AI-powered legal research and drafting platform built on its own US legal database of millions of court opinions, statutes, and regulations spanning federal and state jurisdictions. Its developer products expose this corpus through a REST case-law API (semantic, keyword, and hybrid search; opinion retrieval; citator treatments), a Model Context Protocol (MCP) server for AI agents, and direct SQL read-replica access.
 
-**APIs.json:** [https://raw.githubusercontent.com/api-evangelist/midpage/refs/heads/main/apis.yml](https://raw.githubusercontent.com/api-evangelist/midpage/refs/heads/main/apis.yml)
+**Areas:** Legal · Case Law · Legal Research · Search · Artificial Intelligence
 
-## Tags
+## Midpage on APIs.io
 
-- Legal
-- Case Law
-- Legal Research
-- Search
-- AI
+Everything profiled for Midpage is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/midpage/](https://apis.io/providers/midpage/)** — or go straight to one of the APIs or properties below.
 
-## Timestamps
+### APIs (4)
 
-- **Created:** 2026-06-21
-- **Modified:** 2026-06-21
+- [Midpage MCP Server](https://apis.io/apis/midpage/mcp/) — Remote Model Context Protocol server (OAuth-authenticated) that gives AI assistants like Claude, ChatGPT, and Perplexity source-grounded legal research…
+- [Midpage Opinions API](https://apis.io/apis/midpage/midpage-opinions-api/) — The Opinions API from Midpage — 1 operation(s) for opinions.
+- [Midpage Search API](https://apis.io/apis/midpage/midpage-search-api/) — The Search API from Midpage — 1 operation(s) for search.
+- [Midpage User API](https://apis.io/apis/midpage/midpage-user-api/) — The User API from Midpage — 1 operation(s) for user.
 
-## APIs
+### Published properties
 
-### Midpage Case Law Search API
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-Full-text keyword search over US court opinions with Lexis/Westlaw-style boolean, phrase, wildcard, and proximity (W/n) operators, plus hybrid search that fuses keyword and semantic results with reciprocal rank fusion. Supports filters by court, jurisdiction, state, publication status, and date, with optional facet breakdowns.
+#### Agentic access (1)
 
-- **Human URL:** [https://midpage-docs.apidocumentation.com/](https://midpage-docs.apidocumentation.com/)
-- **Base URL:** `https://app.midpage.ai/api/v1`
+Which operations an agent can call, which act, and which need a human in the loop.
 
-#### Tags
+- [Midpage Agentic Access](https://apis.io/agentic-access/midpage/midpage-agentic-access/)
 
-- Search
-- Case Law
-- Keyword
-- Hybrid
+#### Collections (4)
 
-#### Properties
+Postman and Open Collection request collections.
 
-- [Documentation](https://midpage-docs.apidocumentation.com/)
-- [OpenAPI](openapi/midpage-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/midpage.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/midpage.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+- [Midpage Legal Database API](https://apis.io/collections/midpage/open-midpage/)
+- [Midpage Legal Database Opinions API](https://apis.io/collections/midpage/open-midpage-opinions-api/)
+- [Midpage Legal Database Opinions Search API](https://apis.io/collections/midpage/open-midpage-search-api/)
+- [Midpage Legal Database Opinions User API](https://apis.io/collections/midpage/open-midpage-user-api/)
 
-### Midpage Document Retrieval API
+#### Security (2)
 
-Retrieve full opinion data by opinion ID, reporter citation, or docket number, with bulk reads of up to 100 items per request. Optionally include full HTML opinion content and detailed citator treatments via the POST /opinions/get endpoint.
+Authentication, trust centre, and vulnerability disclosure.
 
-- **Human URL:** [https://midpage-docs.apidocumentation.com/](https://midpage-docs.apidocumentation.com/)
-- **Base URL:** `https://app.midpage.ai/api/v1`
+- [Midpage Authentication](https://apis.io/security/midpage/midpage-authentication/)
+- [Midpage Domain Security](https://apis.io/security/midpage/midpage-domain-security/)
 
-#### Tags
+#### Plans and pricing (1)
 
-- Opinions
-- Documents
-- Retrieve
+Published plans, tiers and prices.
 
-#### Properties
+- [Midpage Plans Pricing](https://apis.io/plans/midpage/midpage-plans-pricing/)
 
-- [Documentation](https://midpage-docs.apidocumentation.com/)
-- [OpenAPI](openapi/midpage-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/midpage.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/midpage.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+#### Rate limits (1)
 
-### Midpage Citations API
+Published request limits.
 
-Bluebook-style citation lookup and AI-powered citator data returned with retrieved opinions - reporter citations, citation counts, an overall treatment signal (Negative, Caution, Neutral), and per-citing-opinion treatment detail with supporting quotes.
+- [Midpage Rate Limits](https://apis.io/rate-limits/midpage/midpage-rate-limits/)
 
-- **Human URL:** [https://midpage-docs.apidocumentation.com/](https://midpage-docs.apidocumentation.com/)
-- **Base URL:** `https://app.midpage.ai/api/v1`
+#### FinOps (1)
 
-#### Tags
+What the API costs to run, by operation.
 
-- Citations
-- Citator
-- Treatments
+- [Midpage Finops](https://apis.io/finops/midpage/midpage-finops/)
 
-#### Properties
+## Where to find this API
 
-- [Documentation](https://midpage-docs.apidocumentation.com/)
-- [OpenAPI](openapi/midpage-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/midpage.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/midpage.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
 
-### Midpage Semantic Search API
-
-Vector similarity search over court opinions using AI embeddings, ranking results by semantic similarity for conceptual queries. Exposed as the `semantic` mode of the POST /search endpoint and combined with keyword search in `hybrid` mode.
-
-- **Human URL:** [https://midpage-docs.apidocumentation.com/](https://midpage-docs.apidocumentation.com/)
-- **Base URL:** `https://app.midpage.ai/api/v1`
-
-#### Tags
-
-- Semantic Search
-- Vector
-- Embeddings
-
-#### Properties
-
-- [Documentation](https://midpage-docs.apidocumentation.com/)
-- [OpenAPI](openapi/midpage-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/midpage.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/midpage.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-### Midpage MCP Server
-
-Remote Model Context Protocol server (OAuth-authenticated) that gives AI assistants like Claude, ChatGPT, and Perplexity source-grounded legal research tools - search, findInOpinion, analyzeOpinion, and preview docket tools (analyzeDocketReport, analyzeDocketFiling). Versioned tool contracts are served at /mcp/v1, /mcp/v2, and /mcp/v3.
-
-- **Human URL:** [https://www.midpage.ai/integrations](https://www.midpage.ai/integrations)
-- **Base URL:** `https://app.midpage.ai/mcp/v3`
-
-#### Tags
-
-- MCP
-- Model Context Protocol
-- Agents
-
-#### Properties
-
-- [Documentation](https://www.midpage.ai/integrations)
-
-## Common Properties
-
-- [LinkedIn](https://www.linkedin.com/company/midpage)
 - [Website](https://www.midpage.ai/)
 - [Documentation](https://midpage-docs.apidocumentation.com/)
-- [Plans](plans/midpage-plans-pricing.yml)
-- [Rate Limits](rate-limits/midpage-rate-limits.yml)
-- [Fin Ops](finops/midpage-finops.yml)
+- [Pricing](https://www.midpage.ai/pricing)
+- [Blog](https://www.midpage.ai/blog)
 
-## Maintainers
+## API Evangelist rating
 
-**FN:** Kin Lane
-**Email:** kin@apievangelist.com
+**Kin Score 30.9** — thin · rubric 0.24.0 · scored 2026-10-17
+
+| Facet | Score |
+|---|---|
+| Discoverability | 66.1 |
+| Contract quality | 53.9 |
+| Contract governance | 0.0 |
+| Operational transparency | 7.9 |
+| Developer ergonomics | 23.8 |
+| Access clarity | 31.6 |
+
+**Agent readiness 22.9** — agent-aware
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | — |
+| OpenAPI Examples | verified |
+| Rate Limit Signal | derived (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | — |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+
+**Regulatory alignment 10.9** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/midpage/](https://apis.io/providers/midpage/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Midpage: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/midpage/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
